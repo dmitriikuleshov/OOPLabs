@@ -1,0 +1,12 @@
+{
+	"name": "C++ Dev Container",
+	"dockerFile": "Dockerfile",
+	"context": "..",
+	"appPort": [],
+	"extensions": ["ms-vscode.cpptools", "twxs.cmake", "ms-vscode.cmake-tools"],
+	"settings": {
+		"terminal.integrated.defaultProfile.linux": "/bin/bash"
+	},
+	"postCreateCommand": "mkdir -p build && cd build && cmake .. && make",
+	"runArgs": ["--init"]
+}
