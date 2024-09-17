@@ -1,8 +1,8 @@
-# Используем базовый образ с GCC
+# Using the base image with GCC
 FROM gcc:14.2.0
 
 
-# Устанавливаем зависимости для Google Test и CMake
+# Installing dependencies for Google Test and CMake
 RUN apt-get update && apt-get install -y \
     cmake \
     fish \
@@ -10,12 +10,12 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 
-# Компиляция Google Test (libgtest-dev поставляется только с исходным кодом)
+# Google Test compilation (libgtest-dev comes with source code only)
 RUN cd /usr/src/gtest && cmake . && make && mv lib/*.a /usr/lib
 
 
-# Устанавливаем рабочую директорию по умолчанию
+# Setting the default working directory
 WORKDIR /workspaces/ObjectOrientedProgrammingLab1
 
-# Открываем порт для отладки (необязательно)
+# Opening the port for debugging (optional)
 # EXPOSE 8080
