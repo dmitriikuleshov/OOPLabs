@@ -3,10 +3,40 @@
 	"dockerFile": "Dockerfile",
 	"context": "..",
 	"appPort": [],
-	"extensions": ["ms-vscode.cpptools", "twxs.cmake", "ms-vscode.cmake-tools"],
+	"extensions": [
+		"ms-vscode.cpptools",
+		"ms-vscode.cpptools-extension-pack",
+		"twxs.cmake",
+		"ms-vscode.cmake-tools"
+	],
 	"settings": {
 		"terminal.integrated.defaultProfile.linux": "/bin/bash"
 	},
-	"postCreateCommand": "mkdir -p build && cd build && cmake .. && make",
+	"postCreateCommand": "apt-get update && apt-get install -y cmake && git config --global --add safe.directory '*'",
 	"runArgs": ["--init"]
 }
+
+// ABOUT context & workspace
+// 1. Dev Containers Mount the Workspace:
+// When using VS Code Remote - Containers (Dev Containers), your local project directory is automatically mounted into the container. This means the container has access to the project files from your host machine without needing to explicitly copy them.
+// The "context": ".." in your devcontainer.json indicates that the build context is the parent directory (i.e., the location where your project files are stored). VS Code automatically mounts this as the working directory (/workspace in this case) inside the container.
+// Therefore, you don't need to use COPY because VS Code manages the synchronization of your project files between your local system and the container.
+
+// 2. Dynamic Development Environment:
+// The purpose of Dev Containers is to create a dynamic development environment where your code can change on the host, and those changes are immediately reflected inside the container.
+// If you were to use COPY to move project files into the container during the Docker build process, the files would be statically copied at build time. This would mean changes made to the code after the container is built wouldn't be reflected unless you rebuild the image.
+// By mounting the workspace, any changes made to your project files in VS Code are instantly available in the container.
+// 3. Faster Setup and Iteration:
+// Using mounts instead of copying files reduces the need for rebuilding the Docker image every time you change the code. This allows for faster iterations during development.
+// Rebuilding the Docker image just to include new or modified source code could be time-consuming and unnecessary for development environments, which frequently change.
+// When to Use COPY:
+// COPY is typically used when you need to package code and dependencies into a production image. In that case, copying everything into the container ensures a static and portable image for deployment.
+// However, for development with VS Code Dev Containers, you usually rely on the workspace mount to make the environment more flexible.
+
+// ABOUT "runArgs": ["--init"]
+// The init process is a small program (tini or a similar tool) that acts as PID 1 inside the container and is responsible for reaping zombie processes (terminated processes that still have an entry in the process table).
+// Containers do not normally have an init system, which can lead to orphaned child processes if not properly managed. By including --init, you ensure that the init system handles these tasks, leading to a cleaner and more stable environment, especially in long-running containers or containers that spawn multiple processes.
+
+// Process Reaping: When a container runs, it may launch child processes. If those processes terminate, they need to be properly cleaned up (reaped). Without an init process, these can turn into zombie processes that can exhaust system resources.
+// Signal Forwarding: The init process also forwards system signals (like SIGTERM and SIGINT) to child processes, ensuring they are terminated correctly when the container is stopped.
+// By using --init, you're essentially making your container behave more like a typical Linux system in terms of process management, which is especially useful for development environments with multiple running processes.

@@ -1,26 +1,21 @@
-# Используем базовый образ с поддержкой C++
-FROM mcr.microsoft.com/devcontainers/cpp:0-ubuntu-20.04
+# Используем базовый образ с GCC
+FROM gcc:14.2.0
+
 
 # Устанавливаем зависимости для Google Test и CMake
 RUN apt-get update && apt-get install -y \
     cmake \
-    g++ \
-    git \
-    wget \
+    fish \
+    libgtest-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Установка Google Test
-RUN git clone https://github.com/google/googletest.git /usr/src/gtest && \
-    cd /usr/src/gtest && \
-    cmake . && \
-    make && \
-    cp ./lib/*.a /usr/lib && \
-    cd .. && rm -rf googletest
 
-# Устанавливаем рабочую директорию
-WORKDIR /workspace
+# Компиляция Google Test (libgtest-dev поставляется только с исходным кодом)
+RUN cd /usr/src/gtest && cmake . && make && mv lib/*.a /usr/lib
 
-COPY . .
+
+# Устанавливаем рабочую директорию по умолчанию
+WORKDIR /workspaces/ObjectOrientedProgrammingLab1
 
 # Открываем порт для отладки (необязательно)
-EXPOSE 8080
+# EXPOSE 8080
