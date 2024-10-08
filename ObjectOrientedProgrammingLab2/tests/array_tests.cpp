@@ -1,14 +1,12 @@
-#include "../include/array.hpp" // Заголовочный файл с вашим классом Array
+#include "array.hpp"
 #include <gtest/gtest.h>
 
-// Тестирование конструктора по умолчанию
 TEST(ArrayTest, DefaultConstructor) {
     Array<int> arr;
     EXPECT_EQ(arr.size(), 0);
-    EXPECT_GE(arr.capacity(), 2); // Так как вместимость начинается с 2
+    EXPECT_GE(arr.capacity(), 2);
 }
 
-// Тестирование конструктора копирования
 TEST(ArrayTest, CopyConstructor) {
     Array<int> arr;
     arr.push_back(10);
@@ -21,7 +19,6 @@ TEST(ArrayTest, CopyConstructor) {
     EXPECT_EQ(arr_copy[1], 20);
 }
 
-// Тестирование оператора присваивания копированием
 TEST(ArrayTest, CopyAssignmentOperator) {
     Array<int> arr;
     arr.push_back(5);
@@ -35,7 +32,6 @@ TEST(ArrayTest, CopyAssignmentOperator) {
     EXPECT_EQ(arr_copy[1], 15);
 }
 
-// Тестирование конструктора перемещения
 TEST(ArrayTest, MoveConstructor) {
     Array<int> arr;
     arr.push_back(7);
@@ -46,10 +42,9 @@ TEST(ArrayTest, MoveConstructor) {
     EXPECT_EQ(arr_moved.size(), 2);
     EXPECT_EQ(arr_moved[0], 7);
     EXPECT_EQ(arr_moved[1], 14);
-    EXPECT_EQ(arr.size(), 0); // arr должен быть пустым после перемещения
+    EXPECT_EQ(arr.size(), 0);
 }
 
-// Тестирование оператора присваивания перемещением
 TEST(ArrayTest, MoveAssignmentOperator) {
     Array<int> arr;
     arr.push_back(3);
@@ -61,10 +56,9 @@ TEST(ArrayTest, MoveAssignmentOperator) {
     EXPECT_EQ(arr_moved.size(), 2);
     EXPECT_EQ(arr_moved[0], 3);
     EXPECT_EQ(arr_moved[1], 9);
-    EXPECT_EQ(arr.size(), 0); // arr должен быть пустым после перемещения
+    EXPECT_EQ(arr.size(), 0);
 }
 
-// Тестирование метода push_back (копирование)
 TEST(ArrayTest, PushBackCopy) {
     Array<int> arr;
     arr.push_back(1);
@@ -77,18 +71,15 @@ TEST(ArrayTest, PushBackCopy) {
     EXPECT_EQ(arr[2], 3);
 }
 
-// ТУТ ВАЛИТСЯ
-// Тестирование метода push_back (перемещение)
 TEST(ArrayTest, PushBackMove) {
     Array<std::string> arr;
     std::string str = "Hello";
     arr.push_back(std::move(str));
     EXPECT_EQ(arr.size(), 1);
     EXPECT_EQ(arr[0], "Hello");
-    EXPECT_EQ(str, ""); // Строка str должна быть пустой после перемещения
+    EXPECT_EQ(str, "");
 }
 
-// // Тестирование метода emplace_back
 TEST(ArrayTest, EmplaceBack) {
     Array<std::pair<int, std::string>> arr;
     arr.emplace_back(1, "One");
@@ -101,7 +92,6 @@ TEST(ArrayTest, EmplaceBack) {
     EXPECT_EQ(arr[1].second, "Two");
 }
 
-// // Тестирование метода pop_back
 TEST(ArrayTest, PopBack) {
     Array<int> arr;
     arr.push_back(10);
@@ -115,7 +105,6 @@ TEST(ArrayTest, PopBack) {
     EXPECT_EQ(arr[1], 20);
 }
 
-// // Тестирование метода clear
 TEST(ArrayTest, Clear) {
     Array<int> arr;
     arr.push_back(5);
@@ -127,7 +116,6 @@ TEST(ArrayTest, Clear) {
     EXPECT_EQ(arr.size(), 0);
 }
 
-// // Тестирование доступа к элементам через оператор []
 TEST(ArrayTest, AccessOperator) {
     Array<int> arr;
     arr.push_back(100);
@@ -137,7 +125,6 @@ TEST(ArrayTest, AccessOperator) {
     EXPECT_EQ(arr[1], 200);
 }
 
-// // Тестирование исключения при выходе за пределы массива
 TEST(ArrayTest, OutOfBoundsAccess) {
     Array<int> arr;
     arr.push_back(50);

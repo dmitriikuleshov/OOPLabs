@@ -1,11 +1,14 @@
 #include "array.hpp"
+#include "twelve.hpp"
+#include "twelve_digit.hpp"
 #include <iostream>
+#include <string>
 
 int main() {
-    Array<int> arr;
-    arr.push_back(1);
-    for (int i = 0; i < arr.size(); i++) {
-        std::cout << arr[i] << std::endl;
-    }
+    Twelve num1("108");
+    Twelve num2("108");
+    std::cout << "NUM1: " << num1 << std::endl;
+    num1 += num2;
+    std::cout << num1 << std::endl;
     return 0;
 }

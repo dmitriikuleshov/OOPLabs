@@ -27,15 +27,25 @@ endif()
 include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(include)
 
-add_library(lab2_lib include/array.hpp main.cpp)
+add_library(lab2_lib include/array.hpp main.cpp include/twelve_digit.hpp src/twelve_digit.cpp include/twelve.hpp src/twelve.cpp)
 
 add_executable(main_file_exe main.cpp)
 target_link_libraries(main_file_exe PRIVATE lab2_lib)
 
 # Tests
 enable_testing()
-add_executable(unit_tests tests/unit_tests.cpp)
-
+# Array tests
+add_executable(array_tests tests/array_tests.cpp)
 find_package(GTest REQUIRED)
-target_link_libraries(unit_tests GTest::GTest GTest::Main lab2_lib)
-add_test(NAME unit_tests COMMAND unit_tests)
+target_link_libraries(array_tests GTest::GTest GTest::Main lab2_lib)
+add_test(NAME array_tests COMMAND array_tests)
+
+add_executable(twelve_tests tests/twelve_tests.cpp)
+target_link_libraries(twelve_tests GTest::GTest GTest::Main lab2_lib)
+add_test(NAME twelve_tests COMMAND twelve_tests)
+
+# TwelveDigit tests
+add_executable(twelve_digit_tests tests/twelve_digit_tests.cpp)
+target_link_libraries(twelve_digit_tests GTest::GTest GTest::Main lab2_lib)
+add_test(NAME twelve_digit_tests COMMAND twelve_digit_tests)
+

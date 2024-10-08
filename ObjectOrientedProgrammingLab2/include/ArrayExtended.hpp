@@ -1,54 +1,60 @@
-#pragma once
-
+#include <cstring> // For std::memcpy
+#include <iostream>
 #include <stdexcept>
-#include <string>
+#include <utility>
+#include <vector>
 
-template <typename T, typename Allocator = std::allocator<T>> class Array {
+std::vector<int> v;
+
+template <typename T, typename Allocator = std::allocator> class Array {
   private:
+    // Почти всегда лучше вместо голых указателей использовать умные указатели,
+    // например, std::shared_ptr. Почитай доки.
     T *_data;
     size_t _size;
     size_t _capacity;
+
+    // Используем конфигурируемый аллокатор, по дефолту - дефолтный, который new
+    // и прочая хуйня.
     Allocator allocator;
-    using traits = std::allocator_traits<Allocator>;
 
+    // Реалокация памяти
     void reallocate(size_t newCapacity) {
-
-        // T *newData = new T[newCapacity];
+        // Аллокация при помощи allocator_traits
+        using traits = std::allocator_traits<Allocator>;
+        T *newData = traits::allocate(allocator, newCapacity * sizeof(T));
         // T *newData = (T *)::operator new(newCapacity * sizeof(T));
-        T *newData = traits::allocate(allocator, newCapacity);
 
         if (newCapacity < _size) {
             _size = newCapacity;
         }
 
         for (size_t i = 0; i < _size; ++i) {
-            newData[i] = std::move(_data[i]);
+            new (&newData[i]) T(std::move(_data[i]));
         }
 
         for (size_t i = 0; i < _size; ++i) {
             _data[i].~T();
         }
 
-        // delete[] _data;
-        // ::operator delete(_size, _capacity * sizeof(T));
-        traits::deallocate(allocator, _data, _capacity);
+        // Освобождение памяти
+        // traits::deallocate()
+        ::operator delete(_data, _capacity * sizeof(T));
         _data = newData;
         _capacity = newCapacity;
     }
 
   public:
-    // Constructor
+    // Default Constructor
     Array() : _data(nullptr), _size(0), _capacity(0) { reallocate(2); }
 
+    // Destructor
+    ~Array() {
+        clear();
+        ::operator delete(_data, _capacity * sizeof(T));
+    }
+
     // Copy Constructor
-    // Array(const Array &other) noexcept
-    //     : _data(nullptr), _size(0), _capacity(0) {
-    //     reallocate(other.capacity());
-    //     for (size_t i = 0; i < other.size(); ++i) {
-    //         new (&_data[i]) T(other[i]);
-    //     }
-    //     _size = other.size();
-    // }
     Array(const Array &other) : _data(nullptr), _size(0), _capacity(0) {
         reallocate(other.capacity());
         for (size_t i = 0; i < other._size; ++i) {
@@ -83,8 +89,7 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
             return *this;
         }
         clear();
-        //::operator delete(_data, _capacity * sizeof(T));
-        traits::deallocate(allocator, _data, _capacity);
+        ::operator delete(_data, _capacity * sizeof(T));
 
         _data = other._data;
         _size = other._size;
@@ -96,18 +101,11 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
         return *this;
     }
 
-    // Destructor
-    ~Array() noexcept {
-        clear();
-        //::operator delete(_data, _capacity * sizeof(T));
-        traits::deallocate(allocator, _data, _capacity);
-    }
-
     void push_back(const T &value) {
         if (_size >= _capacity) {
             reallocate(_capacity + _capacity / 2);
         }
-        _data[_size] = value;
+        new (&_data[_size]) T(value);
         _size++;
     }
 
@@ -115,9 +113,7 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
         if (_size >= _capacity) {
             reallocate(_capacity + _capacity / 2);
         }
-
-        //_data[_size] = std::move(value);
-        traits::construct(allocator, &_data[_size], std::move(value));
+        new (&_data[_size]) T(std::move(value));
         _size++;
     }
 
@@ -125,11 +121,7 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
         if (_size >= _capacity) {
             reallocate(_capacity + _capacity / 2);
         }
-
-        //_data[_size] = T(std::forward<Args>(constructorArgs)...);
-        // new (&_data[_size]) T(std::forward<Args>(constructorArgs)...);
-        traits::construct(allocator, &_data[_size],
-                          std::forward<Args>(constructorArgs)...);
+        new (&_data[_size]) T(std::forward<Args>(constructorArgs)...);
         return _data[_size++];
     }
 
@@ -153,14 +145,49 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
 
     const T &operator[](size_t index) const {
         if (index >= _size) {
-            throw std::out_of_range("Index out of bounds");
+            throw std::out_of_range("Index out of range");
         }
         return _data[index];
     }
+
     T &operator[](size_t index) {
         if (index >= _size) {
-            throw std::out_of_range("Index out of bounds");
+            throw std::out_of_range("Index out of range");
         }
         return _data[index];
+    }
+
+    void reserve(size_t n) {
+        if (n > _capacity) {
+            reallocate(n);
+        }
+    }
+
+    T &front() {
+        if (_size == 0) {
+            throw std::out_of_range("Array is empty");
+        }
+        return _data[0];
+    }
+
+    const T &front() const {
+        if (_size == 0) {
+            throw std::out_of_range("Array is empty");
+        }
+        return _data[0];
+    }
+
+    T &back() {
+        if (_size == 0) {
+            throw std::out_of_range("Array is empty");
+        }
+        return _data[_size - 1];
+    }
+
+    const T &back() const {
+        if (_size == 0) {
+            throw std::out_of_range("Array is empty");
+        }
+        return _data[_size - 1];
     }
 };
