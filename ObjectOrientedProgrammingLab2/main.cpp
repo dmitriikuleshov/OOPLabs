@@ -1,4 +1,3 @@
-
 #include "twelve.hpp"
 #include <iostream>
 

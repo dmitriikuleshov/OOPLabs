@@ -65,31 +65,31 @@ TwelveDigit TwelveDigit::operator-(unsigned char ch) const {
 }
 
 TwelveDigit &TwelveDigit::operator+=(unsigned char ch) {
-    int currentValue = charToValue(c);
-    int addValue = charToValue(ch);
-    int newValue = (currentValue + addValue) % 12;
-    c = valueToChar(newValue);
+    int current_value = charToValue(c);
+    int add_value = charToValue(ch);
+    int new_value = (current_value + add_value) % 12;
+    c = valueToChar(new_value);
     return *this;
 }
 
 TwelveDigit &TwelveDigit::operator-=(unsigned char ch) {
-    int currentValue = charToValue(c);
-    int subValue = charToValue(ch);
-    int newValue = (currentValue - subValue + 12) % 12;
-    c = valueToChar(newValue);
+    int current_value = charToValue(c);
+    int sub_value = charToValue(ch);
+    int new_value = (current_value - sub_value + 12) % 12;
+    c = valueToChar(new_value);
     return *this;
 }
 
 bool TwelveDigit::sumBiggerOrEqualTwelve(const TwelveDigit &other) {
-    int digit1Value = charToValue(c);
-    int digit2Value = charToValue(other.getChar());
-    return (digit1Value + digit2Value) >= 12;
+    int digit1_value = charToValue(c);
+    int digit2_value = charToValue(other.getChar());
+    return (digit1_value + digit2_value) >= 12;
 }
 
 bool TwelveDigit::diffLessThanZero(const TwelveDigit &subtrahend) {
-    int minuentValue = charToValue(c);
-    int subtrahendValue = charToValue(subtrahend.getChar());
-    return (minuentValue - subtrahendValue) < 0;
+    int minuent_value = charToValue(c);
+    int subtrahend_value = charToValue(subtrahend.getChar());
+    return (minuent_value - subtrahend_value) < 0;
 }
 
 bool TwelveDigit::operator==(const TwelveDigit &other) const {

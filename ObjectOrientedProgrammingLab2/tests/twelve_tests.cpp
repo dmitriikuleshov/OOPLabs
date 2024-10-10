@@ -61,20 +61,20 @@ TEST(TwelveTest, MoveAssignment) {
 }
 
 // operator+=
-void runPlusEqualTest(std::string firstNumValue, std::string secondNumValue,
-                      std::string expectedResultValue) {
-    Twelve firstNum(firstNumValue);
-    Twelve secondNum(secondNumValue);
-    firstNum += secondNum;
-    ASSERT_EQ(firstNum, Twelve(expectedResultValue));
+void runPlusEqualTest(std::string first_num_str, std::string second_num_str,
+                      std::string expected_result_str) {
+    Twelve first_num(first_num_str);
+    Twelve second_num(second_num_str);
+    first_num += second_num;
+    ASSERT_EQ(first_num, Twelve(expected_result_str));
 
-    Twelve firstNum1(firstNumValue);
-    Twelve secondNum1(secondNumValue);
-    firstNum1 += secondNum1;
-    ASSERT_EQ(firstNum1, Twelve(expectedResultValue));
+    Twelve first_num1(first_num_str);
+    Twelve second_num1(second_num_str);
+    first_num1 += second_num1;
+    ASSERT_EQ(first_num1, Twelve(expected_result_str));
 
     // Testing the commutativity of addition
-    ASSERT_EQ(firstNum, firstNum1);
+    ASSERT_EQ(first_num, first_num1);
 }
 
 TEST(PlusEqualTest, PlusEqualTest1) { runPlusEqualTest("A3B", "45", "A84"); }
@@ -90,12 +90,12 @@ TEST(PlusEqualTest, PlusEqualTest5) { runPlusEqualTest("B", "B", "1A"); }
 TEST(PlusEqualTest, PlusEqualTest6) { runPlusEqualTest("BA", "BA", "1B8"); }
 
 // operator -=
-void runMinusEqualTest(std::string minuedValue, std::string subtrahendValue,
-                       std::string expectedDifferenceValue) {
-    Twelve minued(minuedValue);
-    Twelve subtrahend(subtrahendValue);
+void runMinusEqualTest(std::string minued_str, std::string subtrahend_str,
+                       std::string expected_difference_str) {
+    Twelve minued(minued_str);
+    Twelve subtrahend(subtrahend_str);
     minued -= subtrahend;
-    ASSERT_EQ(minued, Twelve(expectedDifferenceValue));
+    ASSERT_EQ(minued, Twelve(expected_difference_str));
 }
 
 TEST(MinusEqualTest, MinusEqualTest1) { runMinusEqualTest("A84", "45", "A3B"); }
@@ -112,10 +112,10 @@ TEST(MinusEqualTest, MinusEqualTest5) { runMinusEqualTest("1A", "B", "B"); }
 
 TEST(MinusEqualTest, MinusEqualTest6) { runMinusEqualTest("1B8", "BA", "BA"); }
 
-void runMinusEqualUnderflowTest(std::string minuedValue,
-                                std::string subtrahendValue) {
-    Twelve minued(minuedValue);
-    Twelve subtrahend(subtrahendValue);
+void runMinusEqualUnderflowTest(std::string minued_str,
+                                std::string subtrahend_str) {
+    Twelve minued(minued_str);
+    Twelve subtrahend(subtrahend_str);
     try {
         minued -= subtrahend;
     } catch (std::underflow_error e) {
@@ -150,16 +150,16 @@ TEST(MinusEqualUnderflowTest, MinusEqualUnderflowTest6) {
 }
 
 // operator +
-void runPlusTest(std::string firstNumValue, std::string secondNumValue,
-                 std::string expectedResultValue) {
-    Twelve firstNum(firstNumValue);
-    Twelve secondNum(secondNumValue);
-    Twelve result = firstNum + secondNum;
-    ASSERT_EQ(result, Twelve(expectedResultValue));
+void runPlusTest(std::string first_num_str, std::string second_num_str,
+                 std::string expected_result_str) {
+    Twelve first_num(first_num_str);
+    Twelve second_num(second_num_str);
+    Twelve result = first_num + second_num;
+    ASSERT_EQ(result, Twelve(expected_result_str));
 
     // Testing the commutativity of addition
-    Twelve result1 = secondNum + firstNum;
-    ASSERT_EQ(result1, Twelve(expectedResultValue));
+    Twelve result1 = second_num + first_num;
+    ASSERT_EQ(result1, Twelve(expected_result_str));
 }
 
 TEST(PlusTest, PlusTest1) { runPlusTest("A3B", "45", "A84"); }
@@ -175,12 +175,12 @@ TEST(PlusTest, PlusTest5) { runPlusTest("B", "B", "1A"); }
 TEST(PlusTest, PlusTest6) { runPlusTest("BA", "BA", "1B8"); }
 
 // operator -
-void runMinusTest(std::string minuedValue, std::string subtrahendValue,
-                  std::string expectedDifferenceValue) {
-    Twelve minued(minuedValue);
-    Twelve subtrahend(subtrahendValue);
+void runMinusTest(std::string minued_str, std::string subtrahend_str,
+                  std::string expected_difference_str) {
+    Twelve minued(minued_str);
+    Twelve subtrahend(subtrahend_str);
     Twelve result = minued - subtrahend;
-    ASSERT_EQ(result, Twelve(expectedDifferenceValue));
+    ASSERT_EQ(result, Twelve(expected_difference_str));
 }
 
 TEST(MinusTest, MinusTest1) { runMinusTest("A84", "45", "A3B"); }
@@ -195,10 +195,9 @@ TEST(MinusTest, MinusTest5) { runMinusTest("1A", "B", "B"); }
 
 TEST(MinusTest, MinusTest6) { runMinusTest("1B8", "BA", "BA"); }
 
-void runMinusUnderflowTest(std::string minuedValue,
-                           std::string subtrahendValue) {
-    Twelve minued(minuedValue);
-    Twelve subtrahend(subtrahendValue);
+void runMinusUnderflowTest(std::string minued_str, std::string subtrahend_str) {
+    Twelve minued(minued_str);
+    Twelve subtrahend(subtrahend_str);
     try {
         Twelve result = minued - subtrahend;
     } catch (std::underflow_error e) {
@@ -234,47 +233,47 @@ TEST(MinusUnderflowTest, MinusUnderflowTest6) {
 
 // Comparison
 TEST(ComparisonTest, ComparisonTest1) {
-    Twelve biggerNum("BBB");
-    Twelve smallerNum("AAA");
-    ASSERT_TRUE(biggerNum > smallerNum);
-    ASSERT_TRUE(smallerNum < biggerNum);
-    ASSERT_FALSE(biggerNum < smallerNum);
-    ASSERT_FALSE(smallerNum > biggerNum);
+    Twelve bigger_num("BBB");
+    Twelve smaller_num("AAA");
+    ASSERT_TRUE(bigger_num > smaller_num);
+    ASSERT_TRUE(smaller_num < bigger_num);
+    ASSERT_FALSE(bigger_num < smaller_num);
+    ASSERT_FALSE(smaller_num > bigger_num);
 
-    ASSERT_FALSE(biggerNum == smallerNum);
-    ASSERT_FALSE(smallerNum == biggerNum);
-    ASSERT_TRUE(biggerNum == biggerNum);
-    ASSERT_TRUE(smallerNum == smallerNum);
+    ASSERT_FALSE(bigger_num == smaller_num);
+    ASSERT_FALSE(smaller_num == bigger_num);
+    ASSERT_TRUE(bigger_num == bigger_num);
+    ASSERT_TRUE(smaller_num == smaller_num);
 }
 
 TEST(ComparisonTest, ComparisonTest2) {
-    Twelve biggerNum("BBB");
-    Twelve smallerNum("AAA");
-    ASSERT_TRUE(biggerNum >= smallerNum);
-    ASSERT_TRUE(smallerNum <= biggerNum);
-    ASSERT_FALSE(biggerNum <= smallerNum);
-    ASSERT_FALSE(smallerNum >= biggerNum);
+    Twelve bigger_num("BBB");
+    Twelve smaller_num("AAA");
+    ASSERT_TRUE(bigger_num >= smaller_num);
+    ASSERT_TRUE(smaller_num <= bigger_num);
+    ASSERT_FALSE(bigger_num <= smaller_num);
+    ASSERT_FALSE(smaller_num >= bigger_num);
 
-    ASSERT_FALSE(biggerNum == smallerNum);
-    ASSERT_FALSE(smallerNum == biggerNum);
-    ASSERT_TRUE(biggerNum == biggerNum);
-    ASSERT_TRUE(smallerNum == smallerNum);
+    ASSERT_FALSE(bigger_num == smaller_num);
+    ASSERT_FALSE(smaller_num == bigger_num);
+    ASSERT_TRUE(bigger_num == bigger_num);
+    ASSERT_TRUE(smaller_num == smaller_num);
 }
 
 TEST(ComparisonTest, ComparisonTes3) {
-    Twelve firstNum("0");
-    Twelve secondNum("0");
-    ASSERT_FALSE(firstNum > secondNum);
-    ASSERT_FALSE(secondNum < firstNum);
-    ASSERT_FALSE(firstNum < secondNum);
-    ASSERT_FALSE(secondNum > firstNum);
+    Twelve zero1("0");
+    Twelve zero2("0");
+    ASSERT_FALSE(zero1 > zero2);
+    ASSERT_FALSE(zero2 < zero1);
+    ASSERT_FALSE(zero1 < zero2);
+    ASSERT_FALSE(zero2 > zero1);
 
-    ASSERT_TRUE(firstNum >= secondNum);
-    ASSERT_TRUE(secondNum <= firstNum);
-    ASSERT_TRUE(firstNum <= secondNum);
-    ASSERT_TRUE(secondNum >= firstNum);
+    ASSERT_TRUE(zero1 >= zero2);
+    ASSERT_TRUE(zero2 <= zero1);
+    ASSERT_TRUE(zero1 <= zero2);
+    ASSERT_TRUE(zero2 >= zero1);
 
-    ASSERT_TRUE(firstNum == secondNum);
+    ASSERT_TRUE(zero1 == zero2);
 }
 
 int main(int argc, char **argv) {

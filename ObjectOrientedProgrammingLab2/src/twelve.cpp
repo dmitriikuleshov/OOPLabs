@@ -133,31 +133,32 @@ bool Twelve::operator>=(const Twelve &other) const { return !(*this < other); }
 // Arithmetic
 Twelve &Twelve::operator+=(const Twelve &other) {
 
-    Twelve biggerNum = (*this <= other ? other : *this);
-    Twelve smallerNum = (*this > other ? other : *this);
-    Twelve inMind;
+    Twelve bigger_num = (*this <= other ? other : *this);
+    Twelve smaller_num = (*this > other ? other : *this);
+    Twelve in_mind;
     Twelve result;
 
     do {
-        inMind = Twelve("0");
+        in_mind = Twelve("0");
         result.digits.clear();
-        for (size_t i = 0; i < biggerNum.digits.size(); ++i) {
-            if (i >= smallerNum.digits.size()) {
-                smallerNum.digits.push_back('0');
+        for (size_t i = 0; i < bigger_num.digits.size(); ++i) {
+            if (i >= smaller_num.digits.size()) {
+                smaller_num.digits.push_back('0');
             }
-            if (biggerNum.digits[i].sumBiggerOrEqualTwelve(
-                    smallerNum.digits[i])) {
-                inMind.digits.push_back('1');
+            if (bigger_num.digits[i].sumBiggerOrEqualTwelve(
+                    smaller_num.digits[i])) {
+                in_mind.digits.push_back('1');
             } else {
-                inMind.digits.push_back('0');
+                in_mind.digits.push_back('0');
             }
-            result.digits.push_back(smallerNum.digits[i] + biggerNum.digits[i]);
+            result.digits.push_back(smaller_num.digits[i] +
+                                    bigger_num.digits[i]);
         }
-        removeInsignificantZeros(inMind);
+        removeInsignificantZeros(in_mind);
         removeInsignificantZeros(result);
-        biggerNum = (inMind <= result ? result : inMind);
-        smallerNum = (inMind > result ? result : inMind);
-    } while (inMind > Twelve("0"));
+        bigger_num = (in_mind <= result ? result : in_mind);
+        smaller_num = (in_mind > result ? result : in_mind);
+    } while (in_mind > Twelve("0"));
 
     copy(result);
     return *this;
@@ -174,30 +175,31 @@ Twelve &Twelve::operator-=(const Twelve &other) {
         throw std::underflow_error("Subtraction results in negative value "
                                    "for unsigned Base12 number");
     }
-    Twelve biggerNum = *this;
-    Twelve smallerNum = other;
-    Twelve inMind;
+    Twelve bigger_num = *this;
+    Twelve smaller_num = other;
+    Twelve in_mind;
     Twelve result;
 
     do {
-        inMind = Twelve("0");
+        in_mind = Twelve("0");
         result.digits.clear();
-        for (size_t i = 0; i < biggerNum.digits.size(); ++i) {
-            if (i >= smallerNum.digits.size()) {
-                smallerNum.digits.push_back('0');
+        for (size_t i = 0; i < bigger_num.digits.size(); ++i) {
+            if (i >= smaller_num.digits.size()) {
+                smaller_num.digits.push_back('0');
             }
-            if (biggerNum.digits[i].diffLessThanZero(smallerNum.digits[i])) {
-                inMind.digits.push_back('1');
+            if (bigger_num.digits[i].diffLessThanZero(smaller_num.digits[i])) {
+                in_mind.digits.push_back('1');
             } else {
-                inMind.digits.push_back('0');
+                in_mind.digits.push_back('0');
             }
-            result.digits.push_back(biggerNum.digits[i] - smallerNum.digits[i]);
+            result.digits.push_back(bigger_num.digits[i] -
+                                    smaller_num.digits[i]);
         }
-        removeInsignificantZeros(inMind);
+        removeInsignificantZeros(in_mind);
         removeInsignificantZeros(result);
-        biggerNum = result;
-        smallerNum = inMind;
-    } while (inMind > Twelve("0"));
+        bigger_num = result;
+        smaller_num = in_mind;
+    } while (in_mind > Twelve("0"));
 
     copy(result);
     return *this;

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdexcept>
-#include <string>
 
 template <typename T, typename Allocator = std::allocator<T>> class Array {
   private:
@@ -56,6 +55,14 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
         }
     }
 
+    // Move Constructor
+    Array(Array &&other) noexcept
+        : _data(other._data), _size(other._size), _capacity(other._capacity) {
+        other._data = nullptr;
+        other._size = 0;
+        other._capacity = 0;
+    }
+
     // Copy Assignment Operator
     Array &operator=(const Array &other) {
         if (this == &other) {
@@ -67,14 +74,6 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
             push_back(other._data[i]);
         }
         return *this;
-    }
-
-    // Move Constructor
-    Array(Array &&other) noexcept
-        : _data(other._data), _size(other._size), _capacity(other._capacity) {
-        other._data = nullptr;
-        other._size = 0;
-        other._capacity = 0;
     }
 
     // Move Assignment Operator

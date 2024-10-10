@@ -78,13 +78,13 @@ TEST(TwelveDigitConstructor, CopyConstructorTest3) {
 // Arithmetics
 
 // operator +=
-void runPlusEqualTest(unsigned char digitStartValue, unsigned char increase,
+void runPlusEqualTest(unsigned char digit_value, unsigned char increase,
                       unsigned char expect) {
-    TwelveDigit digit(digitStartValue);
+    TwelveDigit digit(digit_value);
     digit += increase;
     ASSERT_EQ(digit.getChar(), expect);
 
-    TwelveDigit digit1(digitStartValue);
+    TwelveDigit digit1(digit_value);
     TwelveDigit digit2(increase);
     digit1 += digit2;
     ASSERT_EQ(digit1.getChar(), expect);
@@ -119,13 +119,13 @@ TEST(TwelveDigitAriphmeticOperator, PlusEqualOperatorTest7) {
 }
 
 // operator -=
-void runMinusEqualTest(unsigned char digitStartValue, unsigned char decrease,
+void runMinusEqualTest(unsigned char digit_value, unsigned char decrease,
                        unsigned char expect) {
-    TwelveDigit digit(digitStartValue);
+    TwelveDigit digit(digit_value);
     digit -= decrease;
     ASSERT_EQ(digit.getChar(), expect);
 
-    TwelveDigit digit1(digitStartValue);
+    TwelveDigit digit1(digit_value);
     TwelveDigit digit2(decrease);
     digit1 -= digit2;
     ASSERT_EQ(digit1.getChar(), expect);
@@ -160,10 +160,10 @@ TEST(TwelveDigitAriphmeticOperator, MinusEqualOperatorTest7) {
 }
 
 // operator +
-void runPlusTest(unsigned char digit1StartValue, unsigned char digit2StartValue,
+void runPlusTest(unsigned char digit1_value, unsigned char digit2_value,
                  unsigned char expect) {
-    TwelveDigit digit1(digit1StartValue);
-    TwelveDigit digit2(digit2StartValue);
+    TwelveDigit digit1(digit2_value);
+    TwelveDigit digit2(digit1_value);
     TwelveDigit result = digit1 + digit2;
     ASSERT_EQ(result.getChar(), expect);
 }
@@ -197,10 +197,10 @@ TEST(TwelveDigitAriphmeticOperator, PlusOperatorTest7) {
 }
 
 // operator -
-void runMinusTest(unsigned char digit1StartValue,
-                  unsigned char digit2StartValue, unsigned char expect) {
-    TwelveDigit digit1(digit1StartValue);
-    TwelveDigit digit2(digit2StartValue);
+void runMinusTest(unsigned char digit1_value, unsigned char digit2_value,
+                  unsigned char expect) {
+    TwelveDigit digit1(digit1_value);
+    TwelveDigit digit2(digit2_value);
     TwelveDigit result = digit1 - digit2;
     ASSERT_EQ(result.getChar(), expect);
 }
