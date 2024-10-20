@@ -48,11 +48,18 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
     //     }
     //     _size = other.size();
     // }
+    // Array(const Array &other) : _data(nullptr), _size(0), _capacity(0) {
+    //     reallocate(other.capacity());
+    //     for (size_t i = 0; i < other._size; ++i) {
+    //         push_back(other._data[i]);
+    //     }
+    // }
     Array(const Array &other) : _data(nullptr), _size(0), _capacity(0) {
-        reallocate(other.capacity());
+        reallocate(other._capacity);
         for (size_t i = 0; i < other._size; ++i) {
-            push_back(other._data[i]);
+            traits::construct(allocator, &_data[i], other._data[i]);
         }
+        _size = other._size;
     }
 
     // Move Constructor
@@ -64,14 +71,25 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
     }
 
     // Copy Assignment Operator
+    // Array &operator=(const Array &other) {
+    //     if (this == &other) {
+    //         return *this;
+    //     }
+    //     clear();
+    //     reallocate(other.capacity());
+    //     for (size_t i = 0; i < other._size; ++i) {
+    //         push_back(other._data[i]);
+    //     }
+    //     return *this;
+    // }
     Array &operator=(const Array &other) {
-        if (this == &other) {
-            return *this;
-        }
-        clear();
-        reallocate(other.capacity());
-        for (size_t i = 0; i < other._size; ++i) {
-            push_back(other._data[i]);
+        if (this != &other) {
+            clear();
+            reallocate(other._capacity);
+            for (size_t i = 0; i < other._size; ++i) {
+                traits::construct(allocator, &_data[i], other._data[i]);
+            }
+            _size = other._size;
         }
         return *this;
     }
@@ -102,11 +120,18 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
         traits::deallocate(allocator, _data, _capacity);
     }
 
+    // void push_back(const T &value) {
+    //     if (_size >= _capacity) {
+    //         reallocate(_capacity + _capacity / 2);
+    //     }
+    //     _data[_size] = value;
+    //     _size++;
+    // }
     void push_back(const T &value) {
         if (_size >= _capacity) {
-            reallocate(_capacity + _capacity / 2);
+            reallocate(_capacity == 0 ? 1 : _capacity * 2);
         }
-        _data[_size] = value;
+        traits::construct(allocator, &_data[_size], value);
         _size++;
     }
 
@@ -161,5 +186,32 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
             throw std::out_of_range("Index out of bounds");
         }
         return _data[index];
+    }
+
+    void insert(size_t index, const T &value) {
+        if (index > _size) {
+            throw std::out_of_range("Index out of range");
+        }
+        if (_size >= _capacity) {
+            reallocate(_capacity == 0 ? 1 : _capacity * 2);
+        }
+        // Move elements to the right
+        for (size_t i = _size; i > index; --i) {
+            _data[i] = std::move(_data[i - 1]);
+        }
+        traits::construct(allocator, &_data[index], value);
+        _size++;
+    }
+
+    void erase(size_t index) {
+        if (index >= _size) {
+            throw std::out_of_range("Index out of range");
+        }
+        _data[index].~T(); // Destroy element
+        // Move elements to the left
+        for (size_t i = index; i < _size - 1; ++i) {
+            _data[i] = std::move(_data[i + 1]);
+        }
+        _size--;
     }
 };
