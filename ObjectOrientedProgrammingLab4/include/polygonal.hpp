@@ -49,7 +49,7 @@ template <Number T> class Polygonal : public Figure<T> {
 
     virtual flat_vector<T> centroid() const override;
 
-    virtual double area() const noexcept override;
+    virtual T area() const noexcept override;
 
     virtual operator double() const noexcept override;
 
@@ -65,9 +65,9 @@ template <Number T> class Polygonal : public Figure<T> {
   protected:
     // Stream operators
 
-    virtual std::istream &read_from_stream(std::istream &);
+    virtual std::istream &read_from_stream(std::istream &in) override;
 
-    virtual std::ostream &print_in_stream(std::ostream &) const;
+    virtual std::ostream &print_in_stream(std::ostream &out) const override;
 };
 
 // --------------- IMPLEMENTATION ---------------
@@ -256,7 +256,7 @@ template <Number T> flat_vector<T> Polygonal<T>::centroid() const {
     return result;
 }
 
-template <Number T> double Polygonal<T>::area() const noexcept {
+template <Number T> T Polygonal<T>::area() const noexcept {
     std::vector<flat_vector<T>> diagonals;
     for (size_t i = 1; i < points.size(); ++i) {
         diagonals.push_back(points[i] - points[0]);

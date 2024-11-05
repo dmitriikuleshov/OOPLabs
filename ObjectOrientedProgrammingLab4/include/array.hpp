@@ -20,12 +20,15 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
             _size = newCapacity;
         }
 
+        // for (size_t i = 0; i < _size; ++i) {
+        //     newData[i] = std::move(_data[i]);
+        // }
+        // for (size_t i = 0; i < _size; ++i) {
+        //     _data[i].~T();
+        // }
         for (size_t i = 0; i < _size; ++i) {
-            newData[i] = std::move(_data[i]);
-        }
-
-        for (size_t i = 0; i < _size; ++i) {
-            _data[i].~T();
+            traits::construct(allocator, &newData[i], std::move(_data[i]));
+            traits::destroy(allocator, &_data[i]);
         }
 
         // delete[] _data;
@@ -195,10 +198,15 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
         if (_size >= _capacity) {
             reallocate(_capacity == 0 ? 1 : _capacity * 2);
         }
-        // Move elements to the right
+        // // Move elements to the right
+        // for (size_t i = _size; i > index; --i) {
+        //     _data[i] = std::move(_data[i - 1]);
+        // }
         for (size_t i = _size; i > index; --i) {
-            _data[i] = std::move(_data[i - 1]);
+            traits::construct(allocator, &_data[i], std::move(_data[i - 1]));
+            traits::destroy(allocator, &_data[i - 1]);
         }
+
         traits::construct(allocator, &_data[index], value);
         _size++;
     }
@@ -207,11 +215,18 @@ template <typename T, typename Allocator = std::allocator<T>> class Array {
         if (index >= _size) {
             throw std::out_of_range("Index out of range");
         }
-        _data[index].~T(); // Destroy element
-        // Move elements to the left
+        // _data[index].~T(); // Destroy element
+        // // Move elements to the left
+        // for (size_t i = index; i < _size - 1; ++i) {
+        //     _data[i] = std::move(_data[i + 1]);
+        // }
+
+        traits::destroy(allocator, &_data[index]);
         for (size_t i = index; i < _size - 1; ++i) {
-            _data[i] = std::move(_data[i + 1]);
+            traits::construct(allocator, &_data[i], std::move(_data[i + 1]));
+            traits::destroy(allocator, &_data[i + 1]);
         }
+
         _size--;
     }
 };
