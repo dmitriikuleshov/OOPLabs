@@ -2,7 +2,8 @@
 
 #include <stdexcept>
 
-template <typename T, typename Allocator = std::allocator<T>> class Array {
+template <typename T, typename Allocator = std::allocator<T>> 
+class Array {
   private:
     T *_data;
     size_t _size;

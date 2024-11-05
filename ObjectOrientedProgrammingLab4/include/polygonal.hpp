@@ -17,7 +17,8 @@ const int COUNTER_CLOCKWISE = 2;
 template <Number T>
 int orientation(flat_vector<T> p, flat_vector<T> q, flat_vector<T> r);
 
-template <Number T> class Polygonal : public Figure<T> {
+template <Number T>
+class Polygonal : public Figure<T> {
   public:
     std::vector<flat_vector<T>> points;
 
@@ -84,7 +85,8 @@ int orientation(const flat_vector<T> p, const flat_vector<T> q,
 
 // Constructors
 
-template <Number T> Polygonal<T>::Polygonal() {}
+template <Number T> 
+Polygonal<T>::Polygonal() {}
 
 template <Number T>
 Polygonal<T>::Polygonal(const std::initializer_list<flat_vector<T>> &list) {
@@ -122,7 +124,8 @@ Polygonal<T>::Polygonal(const std::vector<flat_vector<T>> &vect) {
     jarvisMatch();
 }
 
-template <Number T> bool Polygonal<T>::allPointsAreOnTheSameLine() {
+template <Number T> 
+bool Polygonal<T>::allPointsAreOnTheSameLine() {
     bool on_the_same_line = true;
     for (flat_vector p : points) {
         if ((p.x - points[0].x) / (points[1].x - points[0].x) !=
@@ -134,13 +137,15 @@ template <Number T> bool Polygonal<T>::allPointsAreOnTheSameLine() {
     return on_the_same_line;
 }
 
-template <Number T> void Polygonal<T>::removeDuplicatePoints() {
+template <Number T> 
+void Polygonal<T>::removeDuplicatePoints() {
     std::sort(points.begin(), points.end(), cmp_by_len<T>);
     auto last = std::unique(points.begin(), points.end());
     points.erase(last, points.end());
 }
 
-template <Number T> void Polygonal<T>::jarvisMatch() {
+template <Number T> 
+void Polygonal<T>::jarvisMatch() {
     int size = points.size();
     if (size < 3) {
         throw std::logic_error("Error: There are not enough points to build a "
@@ -234,7 +239,8 @@ bool Polygonal<T>::operator==(const Polygonal &other) const noexcept {
 }
 
 // Calculation functions
-template <Number T> flat_vector<T> Polygonal<T>::centroid() const {
+template <Number T> 
+flat_vector<T> Polygonal<T>::centroid() const {
     // flat_vector triangle_centroid_point;
     // flat_vector result;
 
@@ -256,7 +262,8 @@ template <Number T> flat_vector<T> Polygonal<T>::centroid() const {
     return result;
 }
 
-template <Number T> T Polygonal<T>::area() const noexcept {
+template <Number T> 
+T Polygonal<T>::area() const noexcept {
     std::vector<flat_vector<T>> diagonals;
     for (size_t i = 1; i < points.size(); ++i) {
         diagonals.push_back(points[i] - points[0]);
@@ -270,7 +277,8 @@ template <Number T> T Polygonal<T>::area() const noexcept {
     return triangle_area_sum;
 }
 
-template <Number T> Polygonal<T>::operator double() const noexcept {
+template <Number T> 
+Polygonal<T>::operator double() const noexcept {
     return area();
 }
 

@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.17)
-project(LabWork)
+cmake_minimum_required(VERSION 3.10)
+project(LabWork1)
 
 # Set C++ standarts
 set(CMAKE_CXX_STANDARD 20)
@@ -31,17 +31,10 @@ set(TEST_DIR "${CMAKE_SOURCE_DIR}/tests")
 
 # Подключаем GTest
 find_package(GTest REQUIRED)
-include_directories(${GTEST_INCLUDE_DIRS} ${INCLUDE_DIR})
-
-# Собираем все заголовки и исходные файлы в библиотеки
-file(GLOB_RECURSE LIB_HEADERS "${INCLUDE_DIR}/*.hpp")
-file(GLOB_RECURSE LIB_SOURCES "${SRC_DIR}/*.cpp")
-
-add_library(lab3_lib ${LIB_HEADERS} ${LIB_SOURCES})
+include_directories(${INCLUDE_DIR})
 
 # Компилируем главный исполняемый файл
 add_executable(main_file_exe main.cpp)
-target_link_libraries(main_file_exe PRIVATE lab3_lib)
 
 # Настройка тестов
 enable_testing()
@@ -49,7 +42,7 @@ enable_testing()
 # Функция для добавления тестов
 function(add_gtest_executable TEST_NAME TEST_SRC)
     add_executable(${TEST_NAME} ${TEST_SRC})
-    target_link_libraries(${TEST_NAME} GTest::GTest GTest::Main lab3_lib)
+    target_link_libraries(${TEST_NAME} GTest::GTest GTest::Main)
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 endfunction()
 

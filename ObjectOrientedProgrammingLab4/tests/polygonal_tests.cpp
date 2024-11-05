@@ -145,67 +145,67 @@ TEST(CalculationTest, CalculationTest10) {
     runCalculationTest(p, 13.5, flat_vector<double>(3.6, 2.8));
 }
 
-// Hexagon Tests
-// TEST(HexagonTest, Empty) {
-//     Hexagon h;
-//     EXPECT_TRUE(h.points.empty());
-// }
+// Hexagon<double> Tests
+TEST(HexagonTest, Empty) {
+    Hexagon<double> h;
+    EXPECT_TRUE(h.points.empty());
+}
 
-// TEST(HexagonTest, TooFewPoints_Invalid) {
-//     EXPECT_THROW(
-//         Hexagon h({flat_vector<double>{1, 1}, flat_vector<double>{5, 1},
-//                    flat_vector<double>{6, 3}, flat_vector<double>{4, 5},
-//                    flat_vector<double>{2, 4}}),
-//         std::logic_error);
-// }
+TEST(HexagonTest, TooFewPoints_Invalid) {
+    EXPECT_THROW(
+        Hexagon<double> h({flat_vector<double>{1, 1}, flat_vector<double>{5, 1},
+                           flat_vector<double>{6, 3}, flat_vector<double>{4, 5},
+                           flat_vector<double>{2, 4}}),
+        std::logic_error);
+}
 
-// TEST(HexagonTest, Initialization_Valid) {
-//     EXPECT_NO_THROW(
-//         Hexagon h({flat_vector<double>{1, 1}, flat_vector<double>{5, 1},
-//                    flat_vector<double>{6, 3}, flat_vector<double>{4, 5},
-//                    flat_vector<double>{2, 4}, flat_vector<double>{3, 0}}));
-// }
+TEST(HexagonTest, Initialization_Valid) {
+    EXPECT_NO_THROW(Hexagon<double> h(
+        {flat_vector<double>{1, 1}, flat_vector<double>{5, 1},
+         flat_vector<double>{6, 3}, flat_vector<double>{4, 5},
+         flat_vector<double>{2, 4}, flat_vector<double>{3, 0}}));
+}
 
-// TEST(HexagonTest, PointInsideHull_Invalid) {
-//     EXPECT_THROW(
-//         Hexagon h({flat_vector<double>{1, 1}, flat_vector<double>{5, 1},
-//                    flat_vector<double>{6, 3}, flat_vector<double>{4, 5},
-//                    flat_vector<double>{2, 4}, flat_vector<double>{3, 2}}),
-//         std::logic_error);
-// }
+TEST(HexagonTest, PointInsideHull_Invalid) {
+    EXPECT_THROW(Hexagon<double> h(
+                     {flat_vector<double>{1, 1}, flat_vector<double>{5, 1},
+                      flat_vector<double>{6, 3}, flat_vector<double>{4, 5},
+                      flat_vector<double>{2, 4}, flat_vector<double>{3, 2}}),
+                 std::logic_error);
+}
 
-// TEST(HexagonTest, CopyConstructor) {
-//     Hexagon h1{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, 0}};
-//     Hexagon h2(h1);
-//     EXPECT_EQ(h1.points, h2.points);
-// }
+TEST(HexagonTest, CopyConstructor) {
+    Hexagon<double> h1{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, 0}};
+    Hexagon<double> h2(h1);
+    EXPECT_EQ(h1.points, h2.points);
+}
 
-// TEST(HexagonTest, MoveConstructor) {
-//     Hexagon h{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, 0}};
-//     Hexagon h_move(std::move(h));
-//     EXPECT_EQ(h_move.points.size(), 6);
-//     EXPECT_TRUE(h.points.empty());
-// }
+TEST(HexagonTest, MoveConstructor) {
+    Hexagon<double> h{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, 0}};
+    Hexagon<double> h_move(std::move(h));
+    EXPECT_EQ(h_move.points.size(), 6);
+    EXPECT_TRUE(h.points.empty());
+}
 
-// TEST(HexagonTest, CopyAssignment) {
-//     Hexagon h1{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, 0}};
-//     Hexagon h2{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, -1}};
-//     h1 = h2;
-//     EXPECT_EQ(h1.points, h2.points);
-// }
+TEST(HexagonTest, CopyAssignment) {
+    Hexagon<double> h1{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, 0}};
+    Hexagon<double> h2{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, -1}};
+    h1 = h2;
+    EXPECT_EQ(h1.points, h2.points);
+}
 
-// TEST(HexagonTest, MoveAssignment) {
-//     Hexagon h1{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, 0}};
-//     Hexagon h2;
-//     h2 = std::move(h1);
-//     EXPECT_EQ(h2.points.size(), 6);
-//     EXPECT_TRUE(h1.points.empty());
-// }
+TEST(HexagonTest, MoveAssignment) {
+    Hexagon<double> h1{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, 0}};
+    Hexagon<double> h2;
+    h2 = std::move(h1);
+    EXPECT_EQ(h2.points.size(), 6);
+    EXPECT_TRUE(h1.points.empty());
+}
 
-// TEST(HexagonTest, CalculationTest) {
-//     Hexagon h{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, 0}};
-//     ASSERT_NEAR(h.area(), 15.5, 1e-2);
-// }
+TEST(HexagonTest, CalculationTest) {
+    Hexagon<double> h{{1, 1}, {5, 1}, {6, 3}, {4, 5}, {2, 4}, {3, 0}};
+    ASSERT_NEAR(h.area(), 15.5, 1e-2);
+}
 
 int main(int argc, char **argv) {
 

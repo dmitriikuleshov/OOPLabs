@@ -4,6 +4,8 @@
 #include <iostream>
 #include <memory>
 
+// --------------- HEADER ---------------
+
 template <typename T>
 concept Number = std::integral<T> || std::floating_point<T>;
 
@@ -86,7 +88,8 @@ template <Number T>
 flat_vector<T> intersection(const flat_vector<T> &a, const flat_vector<T> &b,
                             const flat_vector<T> &c, const flat_vector<T> &d);
 
-template <Number T> flat_vector<T>::flat_vector() noexcept : x{}, y{} {}
+template <Number T> 
+flat_vector<T>::flat_vector() noexcept : x{}, y{} {}
 
 template <Number T>
 flat_vector<T>::flat_vector(T x, T y) noexcept : x(x), y(y) {}
@@ -121,7 +124,8 @@ flat_vector<T>::operator-=(const flat_vector<T> &other) noexcept {
     return *this;
 }
 
-template <Number T> flat_vector<T> flat_vector<T>::operator-() const noexcept {
+template <Number T> 
+flat_vector<T> flat_vector<T>::operator-() const noexcept {
     flat_vector<T> tmp = *this;
     return ~tmp;
 }
@@ -147,17 +151,20 @@ T flat_vector<T>::dot(const flat_vector<T> &other) const noexcept {
     return (this->x * other.x) + (this->y * other.y);
 }
 
-template <Number T> T flat_vector<T>::len() const noexcept {
+template <Number T> 
+T flat_vector<T>::len() const noexcept {
     return sqrt(this->dot(*this));
 }
-template <Number T> T flat_vector<T>::polar_angle() const noexcept {
+template <Number T> 
+T flat_vector<T>::polar_angle() const noexcept {
     if (x == 0 && y == 0) {
         return 0.0;
     } else {
         return atan2(y, x);
     }
 }
-template <Number T> flat_vector<T> &operator~(flat_vector<T> &v) noexcept {
+template <Number T> 
+flat_vector<T> &operator~(flat_vector<T> &v) noexcept {
     v.x = -v.x;
     v.y = -v.y;
     return v;
@@ -206,7 +213,8 @@ std::ostream &operator<<(std::ostream &out, const flat_vector<T> &f) {
     out << '{' << f.x << ", " << f.y << '}';
     return out;
 }
-template <Number T> bool eq_zero(T d, double eps) noexcept {
+template <Number T> 
+bool eq_zero(T d, double eps) noexcept {
     d = (d < 0 ? -d : d);
     return d < eps;
 }
