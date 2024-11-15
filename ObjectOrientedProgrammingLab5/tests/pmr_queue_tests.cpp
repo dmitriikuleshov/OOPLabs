@@ -1,127 +1,146 @@
 #include "list_memory_resource.hpp"
 #include "pmr_queue.hpp"
 #include <gtest/gtest.h>
-#include <memory_resource>
-#include <string>
 
-TEST(PmrQueueTest, IntQueuePushAndFront) {
-    ListMemoryResource memory_resource;
-    PmrQueue<int> intQueue(&memory_resource);
+// ListMemoryResource Tests
+TEST(ListMemoryResourceTest, AllocateDeallocate) {
+    ListMemoryResource resource;
 
-    intQueue.push(10);
-    intQueue.push(20);
-    intQueue.push(30);
+    void *ptr1 = resource.allocate(64);
+    void *ptr2 = resource.allocate(128);
+    EXPECT_EQ(resource.allocated_block_count(), 2);
 
-    EXPECT_EQ(intQueue.front(), 10);
+    resource.deallocate(ptr1, 64);
+    resource.deallocate(ptr2, 128);
+    EXPECT_EQ(resource.allocated_block_count(), 0);
 }
 
-TEST(PmrQueueTest, IntQueuePop) {
-    ListMemoryResource memory_resource;
-    PmrQueue<int> intQueue(&memory_resource);
-
-    intQueue.push(10);
-    intQueue.push(20);
-    intQueue.pop();
-    EXPECT_EQ(intQueue.front(), 20);
-
-    intQueue.pop();
-    EXPECT_TRUE(intQueue.empty());
-}
-
-TEST(PmrQueueTest, IntQueueIterator) {
-    ListMemoryResource memory_resource;
-    PmrQueue<int> intQueue(&memory_resource);
-
-    intQueue.push(1);
-    intQueue.push(2);
-    intQueue.push(3);
-
-    int expected_value = 1;
-    for (auto it = intQueue.begin(); it != intQueue.end(); ++it) {
-        EXPECT_EQ(*it, expected_value);
-        expected_value++;
-    }
-}
-
-TEST(PmrQueueTest, IntQueueEmpty) {
-    ListMemoryResource memory_resource;
-    PmrQueue<int> intQueue(&memory_resource);
-
-    EXPECT_TRUE(intQueue.empty());
-}
-
-struct ComplexType {
-    int id;
-    std::string name;
-    double value;
-
-    ComplexType(int id, const std::string &name, double value)
-        : id(id), name(name), value(value) {}
-
-    bool operator==(const ComplexType &other) const {
-        return id == other.id && name == other.name && value == other.value;
-    }
-};
-
-TEST(PmrQueueTest, ComplexTypeQueuePushAndFront) {
-    ListMemoryResource memory_resource;
-    PmrQueue<ComplexType> complexQueue(&memory_resource);
-
-    ComplexType item1(1, "Item1", 10.5);
-    ComplexType item2(2, "Item2", 20.75);
-
-    complexQueue.push(item1);
-    complexQueue.push(item2);
-
-    EXPECT_EQ(complexQueue.front(), item1);
-}
-
-TEST(PmrQueueTest, ComplexTypeQueuePopAndReuse) {
-    ListMemoryResource memory_resource;
-    PmrQueue<ComplexType> complexQueue(&memory_resource);
-
-    ComplexType item1(1, "Item1", 10.5);
-    ComplexType item2(2, "Item2", 20.75);
-
-    complexQueue.push(item1);
-    complexQueue.push(item2);
-    complexQueue.pop();
-
-    EXPECT_EQ(complexQueue.front(), item2);
-
-    complexQueue.pop();
-    EXPECT_TRUE(complexQueue.empty());
-}
-
-TEST(PmrQueueTest, ComplexTypeQueueIterator) {
-    ListMemoryResource memory_resource;
-    PmrQueue<ComplexType> complexQueue(&memory_resource);
-
-    ComplexType item1(1, "Item1", 10.5);
-    ComplexType item2(2, "Item2", 20.75);
-    ComplexType item3(3, "Item3", 30.0);
-
-    complexQueue.push(item1);
-    complexQueue.push(item2);
-    complexQueue.push(item3);
-
-    ComplexType expected_items[] = {item1, item2, item3};
-    int i = 0;
-    for (auto it = complexQueue.begin(); it != complexQueue.end(); ++it) {
-        EXPECT_EQ(*it, expected_items[i]);
-        i++;
-    }
-}
-
-TEST(PmrQueueTest, MemoryResourceCleanupOnDestruction) {
-    ListMemoryResource memory_resource;
+TEST(ListMemoryResourceTest, DestructorCleansUp) {
     {
-        PmrQueue<int> tempQueue(&memory_resource);
-        tempQueue.push(1);
-        tempQueue.push(2);
-    } // Queue goes out of scope and should free all memory
+        ListMemoryResource resource;
+        void *ptr1 = resource.allocate(64);
+        void *ptr2 = resource.allocate(128);
+        EXPECT_EQ(resource.allocated_block_count(), 2);
+    }
+}
 
-    // Verify that all allocated memory blocks have been cleared after
-    // destruction of the queue
-    EXPECT_EQ(memory_resource.allocated_block_count(), 0);
+// PmrQueue Tests
+TEST(PmrQueueTest, PushPop) {
+    std::pmr::monotonic_buffer_resource resource;
+    PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue{&resource};
+
+    queue.push(10);
+    queue.push(20);
+    queue.push(30);
+
+    EXPECT_EQ(queue.front(), 10);
+
+    queue.pop();
+    EXPECT_EQ(queue.front(), 20);
+
+    queue.pop();
+    EXPECT_EQ(queue.front(), 30);
+
+    queue.pop();
+    EXPECT_TRUE(queue.empty());
+}
+
+TEST(PmrQueueTest, Clear) {
+    std::pmr::monotonic_buffer_resource resource;
+    PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue{&resource};
+
+    queue.push(10);
+    queue.push(20);
+    queue.push(30);
+    queue.clear();
+
+    EXPECT_TRUE(queue.empty());
+}
+
+TEST(PmrQueueTest, Iteration) {
+    std::pmr::monotonic_buffer_resource resource;
+    PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue{&resource};
+
+    queue.push(10);
+    queue.push(20);
+    queue.push(30);
+
+    int expected[] = {10, 20, 30};
+    int i = 0;
+    for (auto it = queue.begin(); it != queue.end(); ++it) {
+        EXPECT_EQ(*it, expected[i++]);
+    }
+}
+
+TEST(PmrQueueTest, CopyConstructor) {
+    std::pmr::monotonic_buffer_resource resource;
+    PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue1{&resource};
+    queue1.push(10);
+    queue1.push(20);
+
+    PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue2 = queue1;
+
+    EXPECT_EQ(queue2.front(), 10);
+    queue2.pop();
+    EXPECT_EQ(queue2.front(), 20);
+}
+
+TEST(PmrQueueTest, MoveConstructor) {
+    std::pmr::monotonic_buffer_resource resource;
+    PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue1{&resource};
+    queue1.push(10);
+    queue1.push(20);
+
+    PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue2 =
+        std::move(queue1);
+
+    EXPECT_EQ(queue2.front(), 10);
+    queue2.pop();
+    EXPECT_EQ(queue2.front(), 20);
+    EXPECT_TRUE(queue1.empty());
+}
+
+TEST(PmrQueueTest, ComplexType) {
+    struct Complex {
+        int a;
+        double b;
+        std::string c;
+
+        bool operator==(const Complex &other) const {
+            return a == other.a && b == other.b && c == other.c;
+        }
+    };
+
+    std::pmr::monotonic_buffer_resource resource;
+    PmrQueue<Complex, std::pmr::polymorphic_allocator<Complex>> queue{
+        &resource};
+
+    queue.push({1, 1.1, "one"});
+    queue.push({2, 2.2, "two"});
+
+    Complex expected[] = {{1, 1.1, "one"}, {2, 2.2, "two"}};
+    int i = 0;
+    for (auto it = queue.begin(); it != queue.end(); ++it) {
+        EXPECT_EQ(*it, expected[i++]);
+    }
+}
+
+TEST(PmrQueueTest, BackInsertionAndAccess) {
+    std::pmr::monotonic_buffer_resource resource;
+    PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue{&resource};
+
+    queue.push(1);
+    queue.push(2);
+    queue.push(3);
+
+    EXPECT_EQ(queue.front(), 1);
+    queue.pop();
+    EXPECT_EQ(queue.front(), 2);
+}
+
+int main(int argc, char **argv) {
+
+    ::testing::InitGoogleTest(&argc, argv);
+
+    return RUN_ALL_TESTS();
 }
