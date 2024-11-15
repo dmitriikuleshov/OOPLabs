@@ -1,1 +1,0 @@
-/usr/bin/c++  -Werror=maybe-uninitialized CMakeFiles/main_file_exe.dir/main.cpp.o -o main_file_exe 
