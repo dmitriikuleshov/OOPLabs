@@ -34,5 +34,12 @@ int main() {
         std::cout << arr[i].area() << std::endl;
     }
 
+    Polygonal<int> p4{{1, 1}, {3, 1}, {4, 3}, {2, 5}, {0, 20}};
+    Polygonal<double> p5{{1, 1}, {3, 1}, {4, 3}, {2, 5}, {0, 20}};
+    std::cout << "int {1, 1}, {3, 1}, {4, 3}, {2, 5}, {0, 20} polygonal area: "
+              << p4.area() << std::endl;
+    std::cout
+        << "float {1, 1}, {3, 1}, {4, 3}, {2, 5}, {0, 20} polygonal area: "
+        << p5.area() << std::endl;
     return 0;
 }
