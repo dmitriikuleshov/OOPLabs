@@ -1,0 +1,5 @@
+/home/home/ObjectOrientedProgramming/ObjectOrientedProgrammingLab5/build/CMakeFiles/main_file_exe.dir
+/home/home/ObjectOrientedProgramming/ObjectOrientedProgrammingLab5/build/CMakeFiles/pmr_queue_tests.dir
+/home/home/ObjectOrientedProgramming/ObjectOrientedProgrammingLab5/build/CMakeFiles/test.dir
+/home/home/ObjectOrientedProgramming/ObjectOrientedProgrammingLab5/build/CMakeFiles/edit_cache.dir
+/home/home/ObjectOrientedProgramming/ObjectOrientedProgrammingLab5/build/CMakeFiles/rebuild_cache.dir
