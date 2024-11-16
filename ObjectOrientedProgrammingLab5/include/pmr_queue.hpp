@@ -11,8 +11,7 @@ class PmrQueue {
         T data;
         std::shared_ptr<Node> next;
 
-        Node(const T &data, const Allocator &alloc)
-            : data(data), next(nullptr) {}
+        Node(const T &data) : data(data), next(nullptr) {}
     };
 
     // Iterator definition
@@ -105,7 +104,7 @@ class PmrQueue {
     ~PmrQueue() { clear(); }
 
     void push(const T &value) {
-        auto node = std::allocate_shared<Node>(node_alloc_, value, alloc_);
+        auto node = std::allocate_shared<Node>(node_alloc_, value);
         if (!head_) {
             head_ = tail_ = node;
         } else {
