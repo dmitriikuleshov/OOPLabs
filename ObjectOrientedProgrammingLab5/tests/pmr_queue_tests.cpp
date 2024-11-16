@@ -26,7 +26,7 @@ TEST(ListMemoryResourceTest, DestructorCleansUp) {
 
 // PmrQueue Tests
 TEST(PmrQueueTest, PushPop) {
-    std::pmr::monotonic_buffer_resource resource;
+    ListMemoryResource resource;
     PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue{&resource};
 
     queue.push(10);
@@ -46,7 +46,7 @@ TEST(PmrQueueTest, PushPop) {
 }
 
 TEST(PmrQueueTest, Clear) {
-    std::pmr::monotonic_buffer_resource resource;
+    ListMemoryResource resource;
     PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue{&resource};
 
     queue.push(10);
@@ -58,7 +58,7 @@ TEST(PmrQueueTest, Clear) {
 }
 
 TEST(PmrQueueTest, Iteration) {
-    std::pmr::monotonic_buffer_resource resource;
+    ListMemoryResource resource;
     PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue{&resource};
 
     queue.push(10);
@@ -73,7 +73,7 @@ TEST(PmrQueueTest, Iteration) {
 }
 
 TEST(PmrQueueTest, CopyConstructor) {
-    std::pmr::monotonic_buffer_resource resource;
+    ListMemoryResource resource;
     PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue1{&resource};
     queue1.push(10);
     queue1.push(20);
@@ -86,7 +86,7 @@ TEST(PmrQueueTest, CopyConstructor) {
 }
 
 TEST(PmrQueueTest, MoveConstructor) {
-    std::pmr::monotonic_buffer_resource resource;
+    ListMemoryResource resource;
     PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue1{&resource};
     queue1.push(10);
     queue1.push(20);
@@ -111,7 +111,7 @@ TEST(PmrQueueTest, ComplexType) {
         }
     };
 
-    std::pmr::monotonic_buffer_resource resource;
+    ListMemoryResource resource;
     PmrQueue<Complex, std::pmr::polymorphic_allocator<Complex>> queue{
         &resource};
 
@@ -126,7 +126,7 @@ TEST(PmrQueueTest, ComplexType) {
 }
 
 TEST(PmrQueueTest, BackInsertionAndAccess) {
-    std::pmr::monotonic_buffer_resource resource;
+    ListMemoryResource resource;
     PmrQueue<int, std::pmr::polymorphic_allocator<int>> queue{&resource};
 
     queue.push(1);
