@@ -54,6 +54,7 @@ add_library(lab6_lib ${LIB_HEADERS} ${LIB_SOURCES})
 
 # Link nlohmann/json to the library
 target_link_libraries(lab6_lib PRIVATE nlohmann_json::nlohmann_json)
+include_directories(${nlohmann_json_SOURCE_DIR}/include)
 
 # Create the main executable
 add_executable(main_file_exe main.cpp)
