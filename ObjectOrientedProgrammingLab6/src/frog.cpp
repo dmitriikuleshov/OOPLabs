@@ -7,8 +7,8 @@ bool Frog::accept(const std::shared_ptr<NPC> &attacker) const {
     std::shared_ptr<Visitor> attacker_visitor =
         VisitorFactory::create_visitor(attacker->get_type());
 
-    std::shared_ptr<Frog> defender = std::dynamic_pointer_cast<Frog>(
-        std::const_pointer_cast<NPC>(shared_from_this()));
+    std::shared_ptr<NPC> defender =
+        std::const_pointer_cast<NPC>(shared_from_this());
 
     bool result = attacker_visitor->visit(defender);
     attacker->fight_notify(defender, result);
