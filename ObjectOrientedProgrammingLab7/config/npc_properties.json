@@ -1,0 +1,14 @@
+{
+	"Knight": {
+		"move_distance": 30,
+		"kill_distance": 10
+	},
+	"Frog": {
+		"move_distance": 1,
+		"kill_distance": 10
+	},
+	"Dragon": {
+		"move_distance": 50,
+		"kill_distance": 30
+	}
+}
