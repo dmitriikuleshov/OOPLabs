@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "utils.hpp"
 
 void save(const set_t &array, const std::string &filename) {
     std::ofstream fs(filename);
@@ -9,14 +9,14 @@ void save(const set_t &array, const std::string &filename) {
     fs.close();
 }
 
-set_t load(const std::string &filename) {
+set_t load_field(const std::string &filename) {
     set_t result;
     std::ifstream is(filename);
     if (is.good() && is.is_open()) {
         int count;
         is >> count;
         for (int i = 0; i < count; ++i)
-            result.insert(Factory::CreateNPC(is));
+            result.insert(Factory::create_npc(is));
         is.close();
     } else
         std::cerr << "Error: " << std::strerror(errno) << std::endl;

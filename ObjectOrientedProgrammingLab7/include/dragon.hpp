@@ -6,7 +6,7 @@ struct Dragon : public NPC {
     Dragon(const std::string &name, int x, int y);
     Dragon(std::istream &is);
 
-    void print() override;
+    void print() const override;
 
     bool accept(const std::shared_ptr<NPC> &attacker) const override;
 

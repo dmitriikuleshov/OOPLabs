@@ -1,4 +1,4 @@
-#include "knight.h"
+#include "knight.hpp"
 
 Knight::Knight(const std::string &name, int x, int y)
     : NPC(KnightType, name, x, y) {}

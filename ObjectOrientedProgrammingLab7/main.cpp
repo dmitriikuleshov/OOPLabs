@@ -9,8 +9,8 @@ int main() {
     std::cout << "Generating NPCs..." << std::endl;
 
     for (size_t i = 0; i < 10; ++i) {
-        auto npc = Factory::CreateNPC(NpcType(std::rand() % 3 + 1), names[i],
-                                      std::rand() % 100, std::rand() % 100);
+        auto npc = Factory::create_npc(NpcType(std::rand() % 3 + 1), names[i],
+                                       std::rand() % 100, std::rand() % 100);
         array.insert(npc);
         std::cout << "Created: " << *npc << std::endl;
     }

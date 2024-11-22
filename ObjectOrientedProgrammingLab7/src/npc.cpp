@@ -1,4 +1,4 @@
-#include "npc.h"
+#include "npc.hpp"
 
 NPC::NPC(NpcType t, const std::string &_name, int _x, int _y)
     : type(t), name(_name), x(_x), y(_y) {}
@@ -9,6 +9,63 @@ NPC::NPC(NpcType t, std::istream &is) : type(t) {
     is >> y;
 }
 
+NpcType NPC::get_type() const {
+    std::lock_guard<std::mutex> lck(mtx);
+    return type;
+}
+
+std::pair<int, int> NPC::get_position() const {
+    std::lock_guard<std::mutex> lck(mtx);
+    return {x, y};
+}
+
+unsigned int NPC::get_move_distance() const {
+    std::lock_guard<std::mutex> lck(mtx);
+    return move_distance;
+}
+
+bool NPC::is_alive() const {
+    std::lock_guard<std::mutex> lck(mtx);
+    return alive;
+}
+
+bool NPC::is_close(const std::shared_ptr<NPC> &other) const {
+    auto [other_x, other_y] = other->get_position();
+
+    std::lock_guard<std::mutex> lck(mtx);
+    bool close = (std::pow(x - other_x, 2) + std::pow(y - other_y, 2)) <=
+                 std::pow(kill_distance, 2);
+    return close;
+}
+
+void NPC::set_move_distance(unsigned int distance) {
+    std::lock_guard<std::mutex> lck(mtx);
+    move_distance = distance;
+}
+
+void NPC::set_kill_distance(unsigned int distance) {
+    std::lock_guard<std::mutex> lck(mtx);
+    kill_distance = distance;
+}
+
+void NPC::move(int shift_x, int shift_y, int max_x, int max_y) {
+    std::lock_guard<std::mutex> lck(mtx);
+    if (shift_x > move_distance || shift_y > move_distance) {
+        throw std::runtime_error("Max move distance is " + move_distance);
+    }
+    if ((x + shift_x >= 0) && (x + shift_x <= max_x))
+        x += shift_x;
+    if ((y + shift_y >= 0) && (y + shift_y <= max_y))
+        y += shift_y;
+}
+
+void NPC::must_die() {
+    std::lock_guard<std::mutex> lck(mtx);
+    alive = false;
+}
+
+unsigned int NPC::throw_dice() const noexcept { return std::rand() % 6 + 1; }
+
 void NPC::subscribe(const std::shared_ptr<IFightObserver> &observer) {
     observers.push_back(observer);
 }
@@ -18,18 +75,6 @@ void NPC::fight_notify(const std::shared_ptr<NPC> defender, bool win) const {
         o->on_fight(std::const_pointer_cast<NPC>(shared_from_this()), defender,
                     win);
 }
-
-bool NPC::is_close(const std::shared_ptr<NPC> &other, size_t distance) const {
-    if ((std::pow(x - other->x, 2) + std::pow(y - other->y, 2)) <=
-        std::pow(distance, 2))
-        return true;
-    else
-        return false;
-}
-
-NpcType NPC::get_type() { return type; }
-
-std::pair<int, int> NPC::position() const { return {x, y}; }
 
 void NPC::save(std::ostream &os) {
     os << name << std::endl;

@@ -6,7 +6,7 @@ struct Knight : public NPC {
     Knight(const std::string &name, int x, int y);
     Knight(std::istream &is);
 
-    void print() override;
+    void print() const override;
 
     virtual bool accept(const std::shared_ptr<NPC> &attacker) const override;
 

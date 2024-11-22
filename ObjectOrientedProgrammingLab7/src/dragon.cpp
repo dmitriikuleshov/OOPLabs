@@ -1,4 +1,4 @@
-#include "dragon.h"
+#include "dragon.hpp"
 
 Dragon::Dragon(const std::string &name, int x, int y)
     : NPC(DragonType, name, x, y) {}

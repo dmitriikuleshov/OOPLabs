@@ -1,5 +1,5 @@
 #pragma once
-#include "npc.h"
+#include "npc.hpp"
 
 class Visitor {
   public:
