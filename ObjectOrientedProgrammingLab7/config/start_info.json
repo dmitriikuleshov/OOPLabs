@@ -1,62 +1,68 @@
-[
-	{
-		"name": "Dragon_1",
-		"type": "Dragon",
-		"x": 42,
-		"y": 75
-	},
-	{
-		"name": "Frog_1",
-		"type": "Frog",
-		"x": 13,
-		"y": 28
-	},
-	{
-		"name": "Knight_1",
-		"type": "Knight",
-		"x": 99,
-		"y": 3
-	},
-	{
-		"name": "Dragon_2",
-		"type": "Dragon",
-		"x": 66,
-		"y": 47
-	},
-	{
-		"name": "Frog_2",
-		"type": "Frog",
-		"x": 4,
-		"y": 88
-	},
-	{
-		"name": "Knight_2",
-		"type": "Knight",
-		"x": 77,
-		"y": 53
-	},
-	{
-		"name": "Dragon_3",
-		"type": "Dragon",
-		"x": 8,
-		"y": 14
-	},
-	{
-		"name": "Frog_3",
-		"type": "Frog",
-		"x": 22,
-		"y": 94
-	},
-	{
-		"name": "Knight_3",
-		"type": "Knight",
-		"x": 63,
-		"y": 37
-	},
-	{
-		"name": "Dragon_4",
-		"type": "Dragon",
-		"x": 51,
-		"y": 61
-	}
-]
+{
+	"field_max_x": 100,
+	"field_max_y": 100,
+	"field_min_x": -100,
+	"field_min_y": -100,
+	"field": [
+		{
+			"name": "Dragon_1",
+			"type": "Dragon",
+			"x": 42,
+			"y": 75
+		},
+		{
+			"name": "Frog_1",
+			"type": "Frog",
+			"x": 13,
+			"y": 28
+		},
+		{
+			"name": "Knight_1",
+			"type": "Knight",
+			"x": 99,
+			"y": 3
+		},
+		{
+			"name": "Dragon_2",
+			"type": "Dragon",
+			"x": 66,
+			"y": 47
+		},
+		{
+			"name": "Frog_2",
+			"type": "Frog",
+			"x": 4,
+			"y": 88
+		},
+		{
+			"name": "Knight_2",
+			"type": "Knight",
+			"x": 77,
+			"y": 53
+		},
+		{
+			"name": "Dragon_3",
+			"type": "Dragon",
+			"x": 8,
+			"y": 14
+		},
+		{
+			"name": "Frog_3",
+			"type": "Frog",
+			"x": 22,
+			"y": 94
+		},
+		{
+			"name": "Knight_3",
+			"type": "Knight",
+			"x": 63,
+			"y": 37
+		},
+		{
+			"name": "Dragon_4",
+			"type": "Dragon",
+			"x": 51,
+			"y": 61
+		}
+	]
+}

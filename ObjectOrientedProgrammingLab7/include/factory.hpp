@@ -1,10 +1,17 @@
 #pragma once
-#include "config.hpp"
 #include "dragon.hpp"
 #include "frog.hpp"
 #include "knight.hpp"
 #include "npc.hpp"
+#include "npc_properties_config.hpp"
 #include "observer.hpp"
+
+class NpcFactory;
+class NpcFactoryWithConfig;
+class KnightFactory;
+class FrogFactory;
+class DragonFactory;
+class NpcGenerator;
 
 class NpcFactory : public std::enable_shared_from_this<NpcFactory> {
   protected:
@@ -23,8 +30,10 @@ class NpcFactory : public std::enable_shared_from_this<NpcFactory> {
 
 class NpcFactoryWithConfig : public NpcFactory {
   protected:
-    NpcFactoryWithConfig(std::shared_ptr<INpcConfig> &conf) { config = conf; }
-    std::shared_ptr<INpcConfig> config;
+    NpcFactoryWithConfig(std::shared_ptr<NpcPropertiesConfig> &conf) {
+        config = conf;
+    }
+    std::shared_ptr<NpcPropertiesConfig> config;
     void set_properties(std::shared_ptr<NPC> &npc) {
         npc->set_move_distance(config->get_move_distance(npc_type_name));
         npc->set_kill_distance(config->get_kill_distance(npc_type_name));
@@ -37,7 +46,7 @@ class NpcFactoryWithConfig : public NpcFactory {
 
 class KnightFactory final : public NpcFactoryWithConfig {
   protected:
-    KnightFactory(std::shared_ptr<INpcConfig> &conf)
+    KnightFactory(std::shared_ptr<NpcPropertiesConfig> &conf)
         : NpcFactoryWithConfig(conf) {};
 
   public:
@@ -57,7 +66,7 @@ class KnightFactory final : public NpcFactoryWithConfig {
 
 class FrogFactory final : public NpcFactoryWithConfig {
   protected:
-    FrogFactory(std::shared_ptr<INpcConfig> &conf)
+    FrogFactory(std::shared_ptr<NpcPropertiesConfig> &conf)
         : NpcFactoryWithConfig(conf) {};
 
   public:
@@ -76,7 +85,7 @@ class FrogFactory final : public NpcFactoryWithConfig {
 
 class DragonFactory final : public NpcFactoryWithConfig {
   protected:
-    DragonFactory(std::shared_ptr<INpcConfig> &conf)
+    DragonFactory(std::shared_ptr<NpcPropertiesConfig> &conf)
         : NpcFactoryWithConfig(conf) {};
 
   public:
@@ -96,14 +105,15 @@ class DragonFactory final : public NpcFactoryWithConfig {
 class NpcGenerator {
   private:
     std::unordered_map<NpcType, std::shared_ptr<NpcFactory>> factories;
-    void define_factories() {
-        factories[NpcType::DragonType] = DragonFactory::create();
-        factories[NpcType::FrogType] = FrogFactory::create();
-        factories[NpcType::KnightType] = KnightFactory::create();
-    }
+    NpcGenerator(const std::unordered_map<NpcType, std::shared_ptr<NpcFactory>>
+                     factories)
+        : factories(factories) {}
 
   public:
-    NpcGenerator() { define_factories(); }
+    static std::shared_ptr<NpcGenerator>
+    create(std::unordered_map<NpcType, std::shared_ptr<NpcFactory>> factories) {
+        return std::make_shared<NpcGenerator>(factories);
+    }
     std::shared_ptr<NPC> create_npc(const NpcType &type,
                                     const std::string &name, int x, int y) {
         return factories[type]->create_npc(name, x, y);

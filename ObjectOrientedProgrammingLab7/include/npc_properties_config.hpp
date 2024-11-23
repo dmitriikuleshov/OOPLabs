@@ -2,11 +2,11 @@
 #include "npc.hpp"
 #include <nlohmann/json.hpp>
 
-class INpcConfig;
-class JsonConfig;
-class ConfigHandler;
+class NpcPropertiesConfig;
+class JsonNpcPropertiesConfig;
+class NpcPropertiesConfigHandler;
 
-class ConfigHandler {
+class NpcPropertiesConfigHandler {
   public:
     static bool file_path_has_extension(const std::string &file_path,
                                         const std::string &extension) {
@@ -14,17 +14,17 @@ class ConfigHandler {
         return path.extension() == extension;
     }
 
-    static std::shared_ptr<INpcConfig>
+    static std::shared_ptr<NpcPropertiesConfig>
     create_config(const std::string &file_path) {
         if (file_path_has_extension(file_path, ".json")) {
-            return JsonNpcConfig::create(file_path);
+            return JsonNpcPropertiesConfig::create(file_path);
         } else {
             throw std::runtime_error("Invalid config path!");
         }
     }
 };
 
-class INpcConfig : std::enable_shared_from_this<INpcConfig> {
+class NpcPropertiesConfig : std::enable_shared_from_this<NpcPropertiesConfig> {
   public:
     virtual int get_move_distance(const std::string &npc_type_name) = 0;
     virtual int get_kill_distance(const std::string &npc_type_name) = 0;
@@ -32,10 +32,10 @@ class INpcConfig : std::enable_shared_from_this<INpcConfig> {
     get_enemies(const std::string &npc_type_name) = 0;
 };
 
-class JsonNpcConfig : public INpcConfig {
+class JsonNpcPropertiesConfig : public NpcPropertiesConfig {
 
   private:
-    explicit JsonNpcConfig(const std::string &file_path) {
+    explicit JsonNpcPropertiesConfig(const std::string &file_path) {
         std::ifstream file(file_path);
         if (!file.is_open()) {
             throw std::runtime_error("Cannot open configuration file: " +
@@ -48,12 +48,13 @@ class JsonNpcConfig : public INpcConfig {
     using json = nlohmann::json;
     json npc_config;
 
-    static std::shared_ptr<INpcConfig> create(const std::string &file_path) {
-        return std::static_pointer_cast<INpcConfig>(
-            std::make_shared<JsonNpcConfig>(file_path));
+    static std::shared_ptr<NpcPropertiesConfig>
+    create(const std::string &file_path) {
+        return std::static_pointer_cast<NpcPropertiesConfig>(
+            std::make_shared<JsonNpcPropertiesConfig>(file_path));
     }
 
-    JsonNpcConfig() = delete;
+    JsonNpcPropertiesConfig() = delete;
 
     void check_for_npc_in_config(const std::string &npc_type_name) {
         if (!npc_config.contains(npc_type_name)) {

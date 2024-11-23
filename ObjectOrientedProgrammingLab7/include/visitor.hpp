@@ -1,6 +1,6 @@
 #pragma once
-#include "config.hpp"
 #include "npc.hpp"
+#include "npc_properties_config.hpp"
 
 class AttackerVisitor {
   public:
@@ -9,7 +9,7 @@ class AttackerVisitor {
 
 class AttackerVisitorWithConfig : public AttackerVisitor {
   protected:
-    std::shared_ptr<INpcConfig> config;
+    std::shared_ptr<NpcPropertiesConfig> config;
     std::unordered_set<NpcType> enemies;
     std::string attacker_type_name;
 
@@ -18,7 +18,7 @@ class AttackerVisitorWithConfig : public AttackerVisitor {
     }
 
   public:
-    AttackerVisitorWithConfig(std::shared_ptr<INpcConfig> &conf) {
+    AttackerVisitorWithConfig(std::shared_ptr<NpcPropertiesConfig> &conf) {
         config = conf;
         enemies = config->get_enemies(attacker_type_name);
     }
@@ -26,7 +26,7 @@ class AttackerVisitorWithConfig : public AttackerVisitor {
 
 class KnightAttackerVisitor : public AttackerVisitorWithConfig {
   public:
-    KnightAttackerVisitor(std::shared_ptr<INpcConfig> &conf)
+    KnightAttackerVisitor(std::shared_ptr<NpcPropertiesConfig> &conf)
         : AttackerVisitorWithConfig(conf) {
         set_attacker_type_name("Knight");
     }
@@ -40,7 +40,7 @@ class KnightAttackerVisitor : public AttackerVisitorWithConfig {
 
 class FrogAttackerVisitor : public AttackerVisitorWithConfig {
   public:
-    FrogAttackerVisitor(std::shared_ptr<INpcConfig> &conf)
+    FrogAttackerVisitor(std::shared_ptr<NpcPropertiesConfig> &conf)
         : AttackerVisitorWithConfig(conf) {
         set_attacker_type_name("Frog");
     }
@@ -54,7 +54,7 @@ class FrogAttackerVisitor : public AttackerVisitorWithConfig {
 
 class DragonAttackerVisitor : public AttackerVisitorWithConfig {
   public:
-    DragonAttackerVisitor(std::shared_ptr<INpcConfig> &conf)
+    DragonAttackerVisitor(std::shared_ptr<NpcPropertiesConfig> &conf)
         : AttackerVisitorWithConfig(conf) {
         set_attacker_type_name("Dragon");
     }
