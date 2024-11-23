@@ -6,7 +6,7 @@ struct Frog : public NPC {
     Frog(const std::string &name, int x, int y);
     Frog(std::istream &is);
 
-    void print() const override;
+    void print() override;
 
     virtual bool accept(const std::shared_ptr<NPC> &attacker) const override;
 

@@ -1,29 +1,20 @@
 #pragma once
+#include "config.hpp"
 #include "npc.hpp"
 
 class Visitor {
+  protected:
+    std::shared_ptr<INpcConfig> config;
+
   public:
+    NpcFactoryWithConfig(std::shared_ptr<INpcConfig> &conf) { config = conf; }
     virtual bool visit(const std::shared_ptr<NPC> &) const = 0;
 };
 
 class DragonVisitor final : public Visitor {
   public:
     bool visit(const std::shared_ptr<NPC> &npc) const override {
-        bool result{};
-        switch (npc->get_type()) {
-        case NpcType::DragonType:
-            result = false;
-            break;
-
-        case NpcType::FrogType:
-            result = false;
-            break;
-
-        case NpcType::KnightType:
-            result = true;
-            break;
-        }
-        return result;
+        return config.get_enemies();
     }
 };
 

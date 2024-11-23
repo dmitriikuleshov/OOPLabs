@@ -73,7 +73,7 @@ class DragonFactory final : public NpcFactoryWithConfig {
 class NpcGenerator {
   private:
     std::unordered_map<NpcType, std::shared_ptr<NpcFactory>> factories;
-    void create_factories() {
+    void define_factories() {
         factories[NpcType::DragonType] = std::static_pointer_cast<NpcFactory>(
             std::make_shared<DragonFactory>());
         factories[NpcType::FrogType] = std::static_pointer_cast<NpcFactory>(
@@ -83,7 +83,7 @@ class NpcGenerator {
     }
 
   public:
-    NpcGenerator() { create_factories(); }
+    NpcGenerator() { define_factories(); }
     std::shared_ptr<NPC> create_npc(const NpcType &type,
                                     const std::string &name, int x, int y) {
         return factories[type]->create_npc(name, x, y);

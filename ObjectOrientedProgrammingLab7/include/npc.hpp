@@ -10,7 +10,6 @@
 #include <string>
 #include <unordered_map>
 
-// type for npcs
 class NPC;
 class Dragon;
 class Knight;
@@ -48,7 +47,7 @@ class NPC : public std::enable_shared_from_this<NPC> {
     unsigned int move_distance{0};
     unsigned int kill_distance{0};
 
-    std::unordered_map<std::string, std::vector<NpcType>> relations;
+    std::vector<NpcType> enemies;
     std::vector<std::shared_ptr<IFightObserver>> observers;
 
   public:
@@ -58,12 +57,13 @@ class NPC : public std::enable_shared_from_this<NPC> {
     NpcType get_type() const;
     std::pair<int, int> get_position() const;
     unsigned int get_move_distance() const;
+    std::vector<NpcType> get_enemies() const;
     bool is_alive() const;
     virtual bool is_close(const std::shared_ptr<NPC> &other) const;
 
     void set_move_distance(unsigned int distance);
     void set_kill_distance(unsigned int distance);
-    void set_enemies(const std::vector<NpcType>);
+    void set_enemies(const std::vector<NpcType> &en);
 
     void move(int shift_x, int shift_y, int max_x, int max_y);
     void must_die();
@@ -74,7 +74,7 @@ class NPC : public std::enable_shared_from_this<NPC> {
     void fight_notify(const std::shared_ptr<NPC> defender, bool win) const;
 
     virtual bool accept(const std::shared_ptr<NPC> &attacker) const = 0;
-    virtual void print() const = 0;
+    virtual void print() = 0;
 
     virtual void save(std::ostream &os);
 

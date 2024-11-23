@@ -24,6 +24,11 @@ unsigned int NPC::get_move_distance() const {
     return move_distance;
 }
 
+std::vector<NpcType> NPC::get_enemies() const {
+    std::lock_guard<std::mutex> lock(mtx);
+    return enemies;
+}
+
 bool NPC::is_alive() const {
     std::lock_guard<std::mutex> lck(mtx);
     return alive;
@@ -46,6 +51,11 @@ void NPC::set_move_distance(unsigned int distance) {
 void NPC::set_kill_distance(unsigned int distance) {
     std::lock_guard<std::mutex> lck(mtx);
     kill_distance = distance;
+}
+
+void NPC::set_enemies(const std::vector<NpcType> &en) {
+    std::lock_guard<std::mutex> lck(mtx);
+    enemies = en;
 }
 
 void NPC::move(int shift_x, int shift_y, int max_x, int max_y) {

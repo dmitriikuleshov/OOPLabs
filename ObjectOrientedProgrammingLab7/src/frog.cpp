@@ -1,4 +1,5 @@
 #include "frog.hpp"
+#include "visitor.hpp"
 
 Frog::Frog(const std::string &name, int x, int y) : NPC(FrogType, name, x, y) {}
 Frog::Frog(std::istream &is) : NPC(FrogType, is) {}

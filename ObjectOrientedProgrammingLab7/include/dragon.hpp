@@ -1,12 +1,12 @@
 #pragma once
-#include "npc.h"
-#include "visitor.h"
+#include "npc.hpp"
+#include "visitor.hpp"
 
 struct Dragon : public NPC {
     Dragon(const std::string &name, int x, int y);
     Dragon(std::istream &is);
 
-    void print() const override;
+    void print() override;
 
     bool accept(const std::shared_ptr<NPC> &attacker) const override;
 

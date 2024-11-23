@@ -1,12 +1,12 @@
 #pragma once
-#include "npc.h"
-#include "visitor.h"
+#include "npc.hpp"
+#include "visitor.hpp"
 
 struct Knight : public NPC {
     Knight(const std::string &name, int x, int y);
     Knight(std::istream &is);
 
-    void print() const override;
+    void print() override;
 
     virtual bool accept(const std::shared_ptr<NPC> &attacker) const override;
 

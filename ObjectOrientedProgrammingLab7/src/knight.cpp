@@ -5,6 +5,7 @@ Knight::Knight(const std::string &name, int x, int y)
 Knight::Knight(std::istream &is) : NPC(KnightType, is) {}
 
 bool Knight::accept(const std::shared_ptr<NPC> &attacker) const {
+
     std::shared_ptr<Visitor> attacker_visitor =
         VisitorFactory::create_visitor(attacker->get_type());
 
