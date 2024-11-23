@@ -1,8 +1,7 @@
 {
 	"field_max_x": 100,
 	"field_max_y": 100,
-	"field_min_x": -100,
-	"field_min_y": -100,
+
 	"field": [
 		{
 			"name": "Dragon_1",

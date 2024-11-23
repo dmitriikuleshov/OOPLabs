@@ -1,13 +1,7 @@
 #include "npc.hpp"
 
-NPC::NPC(NpcType t, const std::string &_name, int _x, int _y)
-    : type(t), name(_name), x(_x), y(_y) {}
-
-NPC::NPC(NpcType t, std::istream &is) : type(t) {
-    is >> name;
-    is >> x;
-    is >> y;
-}
+NPC::NPC(NpcType t, const char letter, const std::string &name, int x, int y)
+    : type(t), letter(letter), name(name), x(x), y(y) {}
 
 NpcType NPC::get_type() const {
     std::lock_guard<std::mutex> lck(mtx);
@@ -22,6 +16,11 @@ std::pair<int, int> NPC::get_position() const {
 unsigned int NPC::get_move_distance() const {
     std::lock_guard<std::mutex> lck(mtx);
     return move_distance;
+}
+
+char NPC::get_letter() const {
+    std::lock_guard<std::mutex> lck(mtx);
+    return letter;
 }
 
 std::unordered_set<NpcType> NPC::get_enemies() const {

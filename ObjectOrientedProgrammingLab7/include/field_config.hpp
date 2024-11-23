@@ -36,8 +36,6 @@ class FieldConfig : std::enable_shared_from_this<FieldConfig> {
   public:
     virtual int get_field_max_x() = 0;
     virtual int get_field_max_y() = 0;
-    virtual int get_field_min_x() = 0;
-    virtual int get_field_min_y() = 0;
     virtual std::vector<NpcFieldConfigData> get_field() = 0;
 };
 
@@ -78,14 +76,6 @@ class JsonFieldConfig : public FieldConfig {
 
     int get_field_max_y() override {
         return get_field_size_property("field_max_y");
-    }
-
-    int get_field_min_x() override {
-        return get_field_size_property("field_min_x");
-    }
-
-    int get_field_min_y() override {
-        return get_field_size_property("field_min_y");
     }
 
     std::vector<NpcFieldConfigData> get_field() override {

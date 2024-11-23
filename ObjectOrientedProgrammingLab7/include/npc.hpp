@@ -40,7 +40,7 @@ class NPC : public std::enable_shared_from_this<NPC> {
   protected:
     mutable std::mutex mtx;
     NpcType type;
-    std::string str_type;
+    char letter;
     std::string name{""};
     int x{0};
     int y{0};
@@ -52,12 +52,12 @@ class NPC : public std::enable_shared_from_this<NPC> {
     std::vector<std::shared_ptr<IFightObserver>> observers;
 
   public:
-    NPC(NpcType t, const std::string &name, int _x, int _y);
-    NPC(NpcType t, std::istream &is);
+    NPC(NpcType t, const char letter, const std::string &name, int _x, int _y);
 
     NpcType get_type() const;
     std::pair<int, int> get_position() const;
     unsigned int get_move_distance() const;
+    char get_letter() const;
     std::unordered_set<NpcType> get_enemies() const;
     bool is_alive() const;
     virtual bool is_close(const std::shared_ptr<NPC> &other) const;

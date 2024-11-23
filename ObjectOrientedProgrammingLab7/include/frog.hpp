@@ -4,8 +4,8 @@
 
 class Frog : public NPC {
   protected:
-    Frog(const std::string &name, int x, int y) : NPC(KnightType, name, x, y) {}
-    Frog(std::istream &is) : NPC(FrogType, is) {}
+    Frog(const std::string &name, int x, int y)
+        : NPC(FrogType, 'F', name, x, y) {}
 
   public:
     static std::shared_ptr<NPC> create(const std::string &name, int x, int y) {

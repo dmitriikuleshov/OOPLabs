@@ -5,8 +5,7 @@
 class Knight : public NPC {
   protected:
     Knight(const std::string &name, int x, int y)
-        : NPC(KnightType, name, x, y) {}
-    Knight(std::istream &is) : NPC(KnightType, is) {}
+        : NPC(KnightType, 'K', name, x, y) {}
 
   public:
     static std::shared_ptr<NPC> create(const std::string &name, int x, int y) {

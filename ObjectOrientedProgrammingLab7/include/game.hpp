@@ -11,9 +11,9 @@
 #include "factory.hpp"
 #include "visitor.hpp"
 
-class GameHandler {
+class GameWorldManager {
   public:
-    GameHandler() {
+    GameWorldManager() {
         npc_properties_config = NpcPropertiesConfigHandler::create_config(
             npc_properties_config_file_path);
         field_config =
@@ -26,10 +26,8 @@ class GameHandler {
     }
 
     std::vector<std::shared_ptr<NPC>> get_npcs() { return npcs; }
-    int get_field_max_x() { return field_max_x; }
-    int get_field_max_y() { return field_max_y; }
-    int get_field_min_x() { return field_min_x; }
-    int get_field_min_y() { return field_min_y; }
+    int get_max_x() { return field_max_x; }
+    int get_max_y() { return field_max_y; }
 
   private:
     // npc config
@@ -48,8 +46,6 @@ class GameHandler {
     // field size
     int field_max_x;
     int field_max_y;
-    int field_min_x;
-    int field_min_y;
 
     // npc interraction
     std::unordered_map<NpcType, std::shared_ptr<NpcFactory>> npc_factories;
@@ -85,8 +81,6 @@ class GameHandler {
     void define_field_size() {
         field_max_x = field_config->get_field_max_x();
         field_max_y = field_config->get_field_max_y();
-        field_min_x = field_config->get_field_min_x();
-        field_min_y = field_config->get_field_min_y();
     }
 
     void generate_npcs() {
@@ -98,17 +92,45 @@ class GameHandler {
     }
 };
 
-class Battle {
+class Printer {
   private:
-    GameHandler game = GameHandler();
-    std::vector<std::shared_ptr<NPC>> npcs = game.get_npcs();
-    int max_x = game.get_field_max_x();
-    int max_y = game.get_field_max_y();
-    int min_x = game.get_field_min_x();
-    int min_y = game.get_field_min_y();
+    int max_x, max_y;
+    std::vector<std::vector<std::string>> field;
+    Printer(int max_x, int max_y) : max_x(max_x), max_y(max_y) {}
 
   public:
-    void run() {}
+    static std::shared_ptr<Printer> create(int max_x, int max_y) {
+        return std::make_shared<Printer>(max_x, max_y);
+    }
+    void print_field(const std::vector<std::shared_ptr<NPC>> &npcs) {
+        for (auto &row : field) {
+            for (auto &cell : row) {
+                cell = " ";
+            }
+        }
+
+        for (const auto &npc : npcs) {
+            auto [x, y] = npc->get_position();
+            field[x][y] = npc->get_letter();
+        }
+
+        for (const auto &row : field) {
+            for (const auto &cell : row) {
+                std::cout << cell;
+            }
+            std::cout << '\n';
+        }
+    }
 };
 
-int main() { return 0; }
+class Game {
+  private:
+    GameWorldManager game_world_manager = GameWorldManager();
+    std::vector<std::shared_ptr<NPC>> npcs = game_world_manager.get_npcs();
+    int max_x = game_world_manager.get_max_x();
+    int max_y = game_world_manager.get_max_y();
+    std::shared_ptr<Printer> printer = Printer::create(max_x, max_y);
+
+  public:
+    void run() { printer->print_field(npcs); }
+};
