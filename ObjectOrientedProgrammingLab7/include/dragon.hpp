@@ -2,15 +2,30 @@
 #include "npc.hpp"
 #include "visitor.hpp"
 
-struct Dragon : public NPC {
-    Dragon(const std::string &name, int x, int y);
-    Dragon(std::istream &is);
+class Dragon : public NPC {
+  protected:
+    Dragon(const std::string &name, int x, int y)
+        : NPC(DragonType, name, x, y) {}
+    Dragon(std::istream &is) : NPC(DragonType, is) {}
 
-    void print() override;
+  public:
+    static std::shared_ptr<NPC> create(const std::string &name, int x, int y) {
+        return std::const_pointer_cast<NPC>(
+            std::make_shared<Dragon>(name, x, y));
+    }
 
-    bool accept(const std::shared_ptr<NPC> &attacker) const override;
+    void print() override { std::cout << *this; }
 
-    void save(std::ostream &os) override;
+    void accept(AttackerVisitor &visitor) override {
+        visitor.visit(shared_from_this());
+    }
 
-    friend std::ostream &operator<<(std::ostream &os, Dragon &dragon);
+    void save(std::ostream &os) override {
+        os << DragonType << std::endl;
+        NPC::save(os);
+    }
+    friend std::ostream &operator<<(std::ostream &os, Dragon &Dragon) {
+        os << "Dragon: " << *static_cast<NPC *>(&Dragon) << std::endl;
+        return os;
+    }
 };

@@ -48,4 +48,10 @@
 //     return 0;
 // }
 
-int main() { return 0; }
+#include "knight.hpp"
+int main() {
+    Knight k("11", 1, 1);
+    auto k = Knight::create("11", 1, 1);
+    auto k1 = k.create("11", 1, 1);
+    return 0;
+}
