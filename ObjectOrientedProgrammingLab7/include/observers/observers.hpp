@@ -1,4 +1,6 @@
-#pragma once
+#ifndef OBSERVERS_HPP
+#define OBSERVERS_HPP
+
 #include "npc.hpp"
 
 class TextObserver final : public IFightObserver {
@@ -6,14 +8,13 @@ class TextObserver final : public IFightObserver {
     TextObserver() {};
 
   public:
-    static std::shared_ptr<IFightObserver> get() {
+    static ptr<IFightObserver> get() {
         static TextObserver instance;
-        return std::shared_ptr<IFightObserver>(&instance,
-                                               [](IFightObserver *) {});
+        return ptr<IFightObserver>(&instance, [](IFightObserver *) {});
     }
 
-    void on_fight(const std::shared_ptr<NPC> attacker,
-                  const std::shared_ptr<NPC> defender, bool win) override {
+    void on_fight(const ptr<NPC> attacker, const ptr<NPC> defender,
+                  bool win) override {
         if (win) {
             std::cout << std::endl << "Murder --------" << std::endl;
             std::cout << "killer: ";
@@ -29,14 +30,13 @@ class FileObserver final : public IFightObserver {
     FileObserver() {};
 
   public:
-    static std::shared_ptr<IFightObserver> get() {
+    static ptr<IFightObserver> get() {
         static FileObserver instance;
-        return std::shared_ptr<IFightObserver>(&instance,
-                                               [](IFightObserver *) {});
+        return ptr<IFightObserver>(&instance, [](IFightObserver *) {});
     }
 
-    void on_fight(const std::shared_ptr<NPC> attacker,
-                  const std::shared_ptr<NPC> defender, bool win) override {
+    void on_fight(const ptr<NPC> attacker, const ptr<NPC> defender,
+                  bool win) override {
         if (win) {
             std::ofstream fs("log.txt", std::ios::app);
             fs << std::endl
@@ -47,3 +47,5 @@ class FileObserver final : public IFightObserver {
         }
     }
 };
+
+#endif // OBSERVERS_HPP

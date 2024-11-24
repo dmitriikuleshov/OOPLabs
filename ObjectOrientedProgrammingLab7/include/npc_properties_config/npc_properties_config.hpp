@@ -28,8 +28,7 @@ class JsonNpcPropertiesConfig : public NpcPropertiesConfig {
         file >> npc_config;
     }
 
-    static std::shared_ptr<NpcPropertiesConfig>
-    create(const std::string &file_path) {
+    static ptr<NpcPropertiesConfig> create(const std::string &file_path) {
         return std::static_pointer_cast<NpcPropertiesConfig>(
             std::make_shared<JsonNpcPropertiesConfig>(file_path));
     }
@@ -101,7 +100,7 @@ class NpcPropertiesConfigHandler {
         return path.extension() == extension;
     }
 
-    static std::shared_ptr<NpcPropertiesConfig>
+    static ptr<NpcPropertiesConfig>
     create_config(const std::string &file_path) {
         if (file_path_has_extension(file_path, ".json")) {
             return JsonNpcPropertiesConfig::create(file_path);

@@ -1,17 +1,11 @@
-#pragma once
+#ifndef FACTORIES_HPP
+#define FACTORIES_HPP
+
 #include "dragon.hpp"
 #include "frog.hpp"
 #include "knight.hpp"
 #include "npc.hpp"
 #include "npc_properties_config.hpp"
-#include "observer.hpp"
-
-class NpcFactory;
-class NpcFactoryWithConfig;
-class KnightFactory;
-class FrogFactory;
-class DragonFactory;
-class NpcGenerator;
 
 class NpcFactory : public std::enable_shared_from_this<NpcFactory> {
   protected:
@@ -114,3 +108,5 @@ class NpcGenerator {
         return factories[type]->create_npc(name, x, y);
     }
 };
+
+#endif // FACTORIES_HPP

@@ -1,5 +1,4 @@
 #include "frog.hpp"
-#include "visitor.hpp"
 
 Frog::Frog(const std::string &name, int x, int y)
     : NPC(FrogType, 'F', name, x, y) {}
@@ -10,8 +9,8 @@ ptr<NPC> Frog::create(const std::string &name, int x, int y) {
 
 void Frog::print() { std::cout << *this; }
 
-void Frog::accept(AttackerVisitor &visitor) {
-    visitor.visit(shared_from_this());
+void Frog::accept(ptr<AttackerVisitor> &visitor) {
+    visitor->visit(shared_from_this());
 }
 
 void Frog::save(std::ostream &os) {
@@ -20,6 +19,6 @@ void Frog::save(std::ostream &os) {
 }
 
 std::ostream &operator<<(std::ostream &os, Frog &Frog) {
-    os << "Knight: " << *static_cast<NPC *>(&Frog) << std::endl;
+    os << "Frog: " << *static_cast<NPC *>(&Frog) << std::endl;
     return os;
 }

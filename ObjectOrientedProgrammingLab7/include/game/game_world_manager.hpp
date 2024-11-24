@@ -1,4 +1,6 @@
-#pragma once
+#ifndef GAME_WORLD_MANAGER_HPP
+#define GAME_WORLD_MANAGER_HPP
+
 #include <cstdlib>
 #include <filesystem>
 #include <string>
@@ -8,8 +10,8 @@
 #include "field_config.hpp"
 #include "npc_properties_config.hpp"
 
-#include "factory.hpp"
-#include "visitor.hpp"
+#include "attacker_visitors.hpp"
+#include "factories.hpp"
 
 class GameWorldManager {
   public:
@@ -23,7 +25,14 @@ class GameWorldManager {
         generate_npcs();
     }
 
+    static ptr<GameWorldManager> create() {
+        return std::make_shared<GameWorldManager>();
+    }
+
     std::vector<ptr<NPC>> get_npcs() { return npcs; }
+    std::unordered_map<NpcType, ptr<AttackerVisitor>> get_attacker_visitors() {
+        return attacker_visitors;
+    }
     int get_max_x() { return field_max_x; }
     int get_max_y() { return field_max_y; }
 
@@ -123,67 +132,4 @@ class GameWorldManager {
     }
 };
 
-class Printer {
-  private:
-    int max_x, max_y;
-    std::vector<std::vector<std::string>> field;
-
-    void print_horizontal() {
-        for (size_t i = 0; i < (max_y + 1) * 3; ++i) {
-            std::cout << ".";
-        }
-    }
-
-    void load_field(const std::vector<ptr<NPC>> &npcs) {
-        for (auto &row : field) {
-            for (auto &cell : row) {
-                cell = " ";
-            }
-        }
-
-        for (const auto &npc : npcs) {
-            if (npc->is_alive()) {
-                auto [x, y] = npc->get_position();
-                field[x][y] = npc->get_letter();
-            }
-        }
-    }
-
-    void print_in_console() {
-        print_horizontal();
-        std::cout << '\n';
-        for (const auto &row : field) {
-            std::cout << "|>";
-            for (const auto &cell : row) {
-                std::cout << " " + cell + " ";
-            }
-            std::cout << "<|\n";
-        }
-        print_horizontal();
-    }
-
-  public:
-    Printer(int max_x, int max_y) : max_x(max_x), max_y(max_y) {
-        field = std::vector<std::vector<std::string>>(
-            max_x, std::vector<std::string>(max_y, " "));
-    }
-    static ptr<Printer> create(int max_x, int max_y) {
-        return std::make_shared<Printer>(max_x, max_y);
-    }
-    void print_field(const std::vector<ptr<NPC>> &npcs) {
-        load_field(npcs);
-        print_in_console();
-    }
-};
-
-class Game {
-  private:
-    GameWorldManager game_world_manager = GameWorldManager();
-    std::vector<ptr<NPC>> npcs = game_world_manager.get_npcs();
-    int max_x = game_world_manager.get_max_x();
-    int max_y = game_world_manager.get_max_y();
-    ptr<Printer> printer = Printer::create(max_x, max_y);
-
-  public:
-    void run() { printer->print_field(npcs); }
-};
+#endif // GAME_WORLD_MANAGER_HPP

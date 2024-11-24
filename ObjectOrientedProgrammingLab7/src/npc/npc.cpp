@@ -33,7 +33,7 @@ bool NPC::is_alive() const {
     return alive;
 }
 
-bool NPC::is_close(const std::shared_ptr<NPC> &other) const {
+bool NPC::is_close(const ptr<NPC> &other) const {
     auto [other_x, other_y] = other->get_position();
 
     std::lock_guard<std::mutex> lck(mtx);
@@ -59,9 +59,6 @@ void NPC::set_enemies(const std::unordered_set<NpcType> &en) {
 
 void NPC::move(int shift_x, int shift_y, int max_x, int max_y) {
     std::lock_guard<std::mutex> lck(mtx);
-    if (shift_x > move_distance || shift_y > move_distance) {
-        throw std::runtime_error("Max move distance is " + move_distance);
-    }
     if ((x + shift_x >= 0) && (x + shift_x <= max_x))
         x += shift_x;
     if ((y + shift_y >= 0) && (y + shift_y <= max_y))
@@ -75,11 +72,11 @@ void NPC::must_die() {
 
 unsigned int NPC::throw_dice() const noexcept { return std::rand() % 6 + 1; }
 
-void NPC::subscribe(const std::shared_ptr<IFightObserver> &observer) {
+void NPC::subscribe(const ptr<IFightObserver> &observer) {
     observers.push_back(observer);
 }
 
-void NPC::fight_notify(const std::shared_ptr<NPC> defender, bool win) const {
+void NPC::fight_notify(const ptr<NPC> defender, bool win) const {
     for (auto &o : observers)
         o->on_fight(std::const_pointer_cast<NPC>(shared_from_this()), defender,
                     win);

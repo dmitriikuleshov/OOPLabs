@@ -9,8 +9,8 @@ ptr<NPC> Knight::create(const std::string &name, int x, int y) {
 
 void Knight::print() { std::cout << *this; }
 
-void Knight::accept(AttackerVisitor &visitor) {
-    visitor.visit(shared_from_this());
+void Knight::accept(ptr<AttackerVisitor> &visitor) {
+    visitor->visit(shared_from_this());
 }
 
 void Knight::save(std::ostream &os) {

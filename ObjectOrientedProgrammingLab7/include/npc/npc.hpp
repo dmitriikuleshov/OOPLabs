@@ -1,8 +1,8 @@
 #ifndef NPC_HPP
 #define NPC_HPP
 
+#include "attacker_visitors.hpp"
 #include "npc_types.hpp"
-#include "visitor.hpp"
 #include <cmath>
 #include <cstring>
 #include <fstream>
@@ -66,7 +66,7 @@ class NPC : public std::enable_shared_from_this<NPC> {
     void subscribe(const ptr<IFightObserver> &observer);
     void fight_notify(const ptr<NPC> defender, bool win) const;
 
-    virtual void accept(AttackerVisitor &visitor) = 0;
+    virtual void accept(ptr<AttackerVisitor> &visitor) = 0;
     virtual void print() = 0;
 
     virtual void save(std::ostream &os);

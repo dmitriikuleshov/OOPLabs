@@ -1,4 +1,5 @@
-#pragma once
+#ifndef FIELD_CONFIG_HPP
+#define FIELD_CONFIG_HPP
 
 #include "fmt/core.h"
 #include "npc.hpp"
@@ -34,7 +35,7 @@ class JsonFieldConfig : public FieldConfig {
         file >> field_config;
     }
 
-    static std::shared_ptr<FieldConfig> create(const std::string &file_path) {
+    static ptr<FieldConfig> create(const std::string &file_path) {
         return std::static_pointer_cast<FieldConfig>(
             std::make_shared<JsonFieldConfig>(file_path));
     }
@@ -131,8 +132,7 @@ class FieldConfigHandler {
         return path.extension() == extension;
     }
 
-    static std::shared_ptr<FieldConfig>
-    create_config(const std::string &file_path) {
+    static ptr<FieldConfig> create_config(const std::string &file_path) {
         if (file_path_has_extension(file_path, ".json")) {
             return JsonFieldConfig::create(file_path);
         } else {
@@ -140,3 +140,5 @@ class FieldConfigHandler {
         }
     }
 };
+
+#endif // FIELD_CONFIG_HPP

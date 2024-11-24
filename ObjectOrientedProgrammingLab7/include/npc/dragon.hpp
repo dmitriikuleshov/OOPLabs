@@ -8,7 +8,7 @@ class Dragon : public NPC {
     Dragon(const std::string &name, int x, int y);
     static ptr<NPC> create(const std::string &name, int x, int y);
     void print() override;
-    void accept(AttackerVisitor &visitor);
+    void accept(ptr<AttackerVisitor> &visitor);
     void save(std::ostream &os) override;
     friend std::ostream &operator<<(std::ostream &os, Dragon &Dragon);
 };
