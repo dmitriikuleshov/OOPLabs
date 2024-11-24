@@ -29,12 +29,13 @@ class GameWorldManager {
         return std::make_shared<GameWorldManager>();
     }
 
-    std::vector<ptr<NPC>> get_npcs() { return npcs; }
-    std::unordered_map<NpcType, ptr<AttackerVisitor>> get_attacker_visitors() {
-        return attacker_visitors;
+    std::vector<ptr<NPC>> get_npcs() const { return npcs; }
+
+    ptr<AttackerVisitor> get_attacker_visitor(NpcType type) const {
+        return attacker_visitors.at(type);
     }
-    int get_max_x() { return field_max_x; }
-    int get_max_y() { return field_max_y; }
+    int get_max_x() const { return field_max_x; }
+    int get_max_y() const { return field_max_y; }
 
     //  private:
     // npc config

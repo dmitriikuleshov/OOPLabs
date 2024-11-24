@@ -19,61 +19,54 @@ class FightManager {
   private:
     ptr<GameWorldManager> gwm;
     std::queue<FightEvent> events;
-    std::unordered_map<NpcType, ptr<AttackerVisitor>> attacker_visitors;
     std::shared_mutex mtx;
+    std::mutex init_mtx;
 
-    // Приватный конструктор
-    FightManager(std::unordered_map<NpcType, ptr<AttackerVisitor>> visitors)
-        : attacker_visitors(std::move(visitors)) {}
+    FightManager() = default;
 
   public:
-    // Singleton с контролем инициализации
-    static FightManager &
-    get(std::optional<std::unordered_map<NpcType, ptr<AttackerVisitor>>>
-            visitors = std::nullopt) {
-        static FightManager instance(visitors.value_or(
-            std::unordered_map<NpcType, ptr<AttackerVisitor>>{}));
+    // Singleton
+    static FightManager &get() {
+        static FightManager instance;
         return instance;
     }
 
-    // Добавление события
+    void initialize(ptr<GameWorldManager> &world_manager) {
+        std::lock_guard<std::mutex> lock(init_mtx);
+        if (!gwm) {
+            gwm = world_manager;
+        }
+    }
+
     void add_event(FightEvent &&event) {
         std::lock_guard<std::shared_mutex> lock(mtx);
         events.push(std::move(event));
     }
 
-    // Получение AttackerVisitor по типу NPC
-    ptr<AttackerVisitor> get_attacker_visitor(NpcType type) {
-        std::shared_lock<std::shared_mutex> lock(mtx);
-        auto it = attacker_visitors.find(type);
-        return (it != attacker_visitors.end()) ? it->second : nullptr;
+    std::optional<FightEvent> get_event() {
+        std::optional<FightEvent> event;
+        std::lock_guard<std::shared_mutex> lock(mtx);
+        if (!events.empty()) {
+            event = events.front();
+            events.pop();
+        }
+        return event;
     }
 
-    // Основной цикл обработки
     void operator()() {
         while (true) {
-            std::optional<FightEvent> event;
-
-            {
-                std::lock_guard<std::shared_mutex> lock(mtx);
-                if (!events.empty()) {
-                    event = events.front();
-                    events.pop();
-                }
-            }
+            auto event = get_event();
 
             if (event) {
-                if (event->attacker->is_alive()) { // Проверка на жизнь
-                    if (event->defender->is_alive()) { // Проверка на жизнь
-                        auto visitor =
-                            get_attacker_visitor(event->attacker->get_type());
-                        if (visitor) {
-                            event->defender->accept(visitor);
-                        }
-                    }
-                } else {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                auto attacker = event->attacker;
+                auto defender = event->defender;
+                if (attacker->is_alive() && defender->is_alive()) {
+                    auto visitor =
+                        gwm->get_attacker_visitor(attacker->get_type());
+                    defender->accept(visitor);
                 }
+            } else {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
         }
     }
@@ -143,7 +136,7 @@ class Game {
     std::thread print_thread;
     std::mutex print_mutex;
     std::mutex move_mutex;
-    ptr<GameWorldManager> game_world_manager;
+    ptr<GameWorldManager> gwm;
     ptr<GameMoveManager> game_move_manager;
     ptr<GameWorldPrinter> printer;
     std::vector<ptr<NPC>> npcs;
@@ -153,18 +146,18 @@ class Game {
 
   public:
     Game() : stop_flag(false) {
-        game_world_manager = GameWorldManager::create();
-        npcs = game_world_manager->get_npcs();
-        max_x = game_world_manager->get_max_x();
-        max_y = game_world_manager->get_max_y();
+        gwm = GameWorldManager::create();
+        npcs = gwm->get_npcs();
+        max_x = gwm->get_max_x();
+        max_y = gwm->get_max_y();
         printer = GameWorldPrinter::create(npcs, max_x, max_y, print_mutex);
         game_move_manager =
             GameMoveManager::create(npcs, max_x, max_y, move_mutex);
+        FightManager::get().initialize(gwm);
     }
 
     void run() {
-        fight_thread = std::thread(std::ref(
-            FightManager::get(game_world_manager->get_attacker_visitors())));
+        fight_thread = std::thread(std::ref(FightManager::get()));
         move_thread =
             std::thread([this]() { game_move_manager->start_moving(); });
         print_thread =
