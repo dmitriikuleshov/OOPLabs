@@ -1,67 +1,60 @@
-#pragma once
+#ifndef VISITOR_HPP
+#define VISITOR_HPP
+
 #include "npc.hpp"
 #include "npc_properties_config.hpp"
+#include "npc_types.hpp"
 
 class AttackerVisitor {
   public:
-    virtual void visit(const std::shared_ptr<NPC> &npc) = 0;
+    virtual void visit(const ptr<NPC> &npc) = 0;
 };
 
 class AttackerVisitorWithConfig : public AttackerVisitor {
   protected:
-    std::shared_ptr<NpcPropertiesConfig> config;
+    ptr<NpcPropertiesConfig> config;
     std::unordered_set<NpcType> enemies;
     std::string attacker_type_name;
 
-    void set_attacker_type_name(const std::string &name) {
-        attacker_type_name = name;
-    }
-
   public:
-    AttackerVisitorWithConfig(std::shared_ptr<NpcPropertiesConfig> &conf) {
-        config = conf;
-        enemies = config->get_enemies(attacker_type_name);
-    }
+    AttackerVisitorWithConfig(ptr<NpcPropertiesConfig> &conf,
+                              const std::string type_name);
 };
 
+// Knight
 class KnightAttackerVisitor : public AttackerVisitorWithConfig {
   public:
-    KnightAttackerVisitor(std::shared_ptr<NpcPropertiesConfig> &conf)
-        : AttackerVisitorWithConfig(conf) {
-        set_attacker_type_name("Knight");
-    }
+    KnightAttackerVisitor(ptr<NpcPropertiesConfig> &conf);
 
-    void visit(const std::shared_ptr<NPC> &npc) override {
-        if (enemies.find(npc->get_type()) != enemies.end()) {
-            npc->must_die();
-        }
-    }
+    KnightAttackerVisitor() = delete;
+
+    static ptr<AttackerVisitor> create(ptr<NpcPropertiesConfig> &conf);
+
+    void visit(const ptr<NPC> &npc) override;
 };
 
+// Frog
 class FrogAttackerVisitor : public AttackerVisitorWithConfig {
   public:
-    FrogAttackerVisitor(std::shared_ptr<NpcPropertiesConfig> &conf)
-        : AttackerVisitorWithConfig(conf) {
-        set_attacker_type_name("Frog");
-    }
+    FrogAttackerVisitor(ptr<NpcPropertiesConfig> &conf);
 
-    void visit(const std::shared_ptr<NPC> &npc) override {
-        if (enemies.find(npc->get_type()) != enemies.end()) {
-            npc->must_die();
-        }
-    }
+    FrogAttackerVisitor() = delete;
+
+    static ptr<AttackerVisitor> create(ptr<NpcPropertiesConfig> &conf);
+
+    void visit(const ptr<NPC> &npc) override;
 };
 
+// Dragon
 class DragonAttackerVisitor : public AttackerVisitorWithConfig {
   public:
-    DragonAttackerVisitor(std::shared_ptr<NpcPropertiesConfig> &conf)
-        : AttackerVisitorWithConfig(conf) {
-        set_attacker_type_name("Dragon");
-    }
+    DragonAttackerVisitor(ptr<NpcPropertiesConfig> &conf);
 
-    void visit(const std::shared_ptr<NPC> &npc) override {
-        if (enemies.find(npc->get_type()) != enemies.end()) {
-            npc->must_die();
-        }
-    }
+    DragonAttackerVisitor() = delete;
+
+    static ptr<AttackerVisitor> create(ptr<NpcPropertiesConfig> &conf);
+
+    void visit(const ptr<NPC> &npc) override;
 };
+
+#endif // VISITOR_HPP

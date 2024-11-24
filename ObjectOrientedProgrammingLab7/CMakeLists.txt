@@ -61,6 +61,14 @@ include_directories(${nlohmann_json_SOURCE_DIR}/include)
 add_executable(main_file_exe main.cpp)
 target_link_libraries(main_file_exe PRIVATE lab6_lib)
 
+
+# Найти и подключить fmt
+find_package(fmt REQUIRED)
+# Подключить fmt к основной библиотеке
+target_link_libraries(lab6_lib PRIVATE fmt::fmt)
+# Подключить fmt к исполняемому файлу
+target_link_libraries(main_file_exe PRIVATE lab6_lib fmt::fmt)
+
 # Enable testing
 enable_testing()
 

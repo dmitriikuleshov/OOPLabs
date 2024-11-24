@@ -1,30 +1,16 @@
-#pragma once
+#ifndef DRAGON_HPP
+#define DRAGON_HPP
+
 #include "npc.hpp"
-#include "visitor.hpp"
 
 class Dragon : public NPC {
-  protected:
-    Dragon(const std::string &name, int x, int y)
-        : NPC(DragonType, 'D', name, x, y) {}
-
   public:
-    static std::shared_ptr<NPC> create(const std::string &name, int x, int y) {
-        return std::const_pointer_cast<NPC>(
-            std::make_shared<Dragon>(name, x, y));
-    }
-
-    void print() override { std::cout << *this; }
-
-    void accept(AttackerVisitor &visitor) override {
-        visitor.visit(shared_from_this());
-    }
-
-    void save(std::ostream &os) override {
-        os << DragonType << std::endl;
-        NPC::save(os);
-    }
-    friend std::ostream &operator<<(std::ostream &os, Dragon &Dragon) {
-        os << "Dragon: " << *static_cast<NPC *>(&Dragon) << std::endl;
-        return os;
-    }
+    Dragon(const std::string &name, int x, int y);
+    static ptr<NPC> create(const std::string &name, int x, int y);
+    void print() override;
+    void accept(AttackerVisitor &visitor);
+    void save(std::ostream &os) override;
+    friend std::ostream &operator<<(std::ostream &os, Dragon &Dragon);
 };
+
+#endif // DRAGON_HPP

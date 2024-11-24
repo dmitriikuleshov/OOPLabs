@@ -1,28 +1,10 @@
-#pragma once
-#include "npc.hpp"
+#ifndef NPC_PROPERTIES_CONFIG_HPP
+#define NPC_PROPERTIES_CONFIG_HPP
+
+#include "npc_types.hpp"
+#include <fstream>
 #include <nlohmann/json.hpp>
-
-class NpcPropertiesConfig;
-class JsonNpcPropertiesConfig;
-class NpcPropertiesConfigHandler;
-
-class NpcPropertiesConfigHandler {
-  public:
-    static bool file_path_has_extension(const std::string &file_path,
-                                        const std::string &extension) {
-        std::filesystem::path path(file_path);
-        return path.extension() == extension;
-    }
-
-    static std::shared_ptr<NpcPropertiesConfig>
-    create_config(const std::string &file_path) {
-        if (file_path_has_extension(file_path, ".json")) {
-            return JsonNpcPropertiesConfig::create(file_path);
-        } else {
-            throw std::runtime_error("Invalid config path!");
-        }
-    }
-};
+#include <unordered_set>
 
 class NpcPropertiesConfig : std::enable_shared_from_this<NpcPropertiesConfig> {
   public:
@@ -34,7 +16,9 @@ class NpcPropertiesConfig : std::enable_shared_from_this<NpcPropertiesConfig> {
 
 class JsonNpcPropertiesConfig : public NpcPropertiesConfig {
 
-  private:
+  public:
+    using json = nlohmann::json;
+    json npc_config;
     explicit JsonNpcPropertiesConfig(const std::string &file_path) {
         std::ifstream file(file_path);
         if (!file.is_open()) {
@@ -43,10 +27,6 @@ class JsonNpcPropertiesConfig : public NpcPropertiesConfig {
         }
         file >> npc_config;
     }
-
-  public:
-    using json = nlohmann::json;
-    json npc_config;
 
     static std::shared_ptr<NpcPropertiesConfig>
     create(const std::string &file_path) {
@@ -112,3 +92,23 @@ class JsonNpcPropertiesConfig : public NpcPropertiesConfig {
         return enemies;
     }
 };
+
+class NpcPropertiesConfigHandler {
+  public:
+    static bool file_path_has_extension(const std::string &file_path,
+                                        const std::string &extension) {
+        std::filesystem::path path(file_path);
+        return path.extension() == extension;
+    }
+
+    static std::shared_ptr<NpcPropertiesConfig>
+    create_config(const std::string &file_path) {
+        if (file_path_has_extension(file_path, ".json")) {
+            return JsonNpcPropertiesConfig::create(file_path);
+        } else {
+            throw std::runtime_error("Invalid config path!");
+        }
+    }
+};
+
+#endif // NPC_PROPERTIES_CONFIG_HPP

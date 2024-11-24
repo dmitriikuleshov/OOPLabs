@@ -1,13 +1,13 @@
 {
-	"field_max_x": 100,
-	"field_max_y": 100,
+	"field_max_x": 50,
+	"field_max_y": 50,
 
 	"field": [
 		{
 			"name": "Dragon_1",
 			"type": "Dragon",
 			"x": 42,
-			"y": 75
+			"y": 35
 		},
 		{
 			"name": "Frog_1",
@@ -18,26 +18,26 @@
 		{
 			"name": "Knight_1",
 			"type": "Knight",
-			"x": 99,
+			"x": 16,
 			"y": 3
 		},
 		{
 			"name": "Dragon_2",
 			"type": "Dragon",
-			"x": 66,
+			"x": 38,
 			"y": 47
 		},
 		{
 			"name": "Frog_2",
 			"type": "Frog",
 			"x": 4,
-			"y": 88
+			"y": 11
 		},
 		{
 			"name": "Knight_2",
 			"type": "Knight",
-			"x": 77,
-			"y": 53
+			"x": 41,
+			"y": 1
 		},
 		{
 			"name": "Dragon_3",
@@ -49,19 +49,19 @@
 			"name": "Frog_3",
 			"type": "Frog",
 			"x": 22,
-			"y": 94
+			"y": 5
 		},
 		{
 			"name": "Knight_3",
 			"type": "Knight",
-			"x": 63,
+			"x": 49,
 			"y": 37
 		},
 		{
 			"name": "Dragon_4",
 			"type": "Dragon",
-			"x": 51,
-			"y": 61
+			"x": 40,
+			"y": 20
 		}
 	]
 }

@@ -15,26 +15,27 @@ class NpcGenerator;
 
 class NpcFactory : public std::enable_shared_from_this<NpcFactory> {
   protected:
-    std::string npc_type_name;
-
-    void set_npc_type_name(const std::string &type_name) {
-        npc_type_name = type_name;
-    }
-
-    virtual void set_properties(std::shared_ptr<NPC> &npc) = 0;
+    virtual void set_properties(ptr<NPC> &npc) = 0;
 
   public:
-    virtual std::shared_ptr<NPC> create_npc(const std::string &name, int x,
-                                            int y) = 0;
+    virtual ptr<NPC> create_npc(const std::string &name, int x, int y) = 0;
 };
 
 class NpcFactoryWithConfig : public NpcFactory {
-  protected:
-    NpcFactoryWithConfig(std::shared_ptr<NpcPropertiesConfig> &conf) {
+  public:
+    std::string npc_type_name;
+
+    NpcFactoryWithConfig(ptr<NpcPropertiesConfig> &conf,
+                         const std::string type_name) {
         config = conf;
+        npc_type_name = type_name;
+        // std::cout << "NpcFactoryWithConfig initialized with type: "
+        //           << npc_type_name << std::endl;
     }
-    std::shared_ptr<NpcPropertiesConfig> config;
-    void set_properties(std::shared_ptr<NPC> &npc) {
+
+  protected:
+    ptr<NpcPropertiesConfig> config;
+    void set_properties(ptr<NPC> &npc) {
         npc->set_move_distance(config->get_move_distance(npc_type_name));
         npc->set_kill_distance(config->get_kill_distance(npc_type_name));
         npc->set_enemies(config->get_enemies(npc_type_name));
@@ -45,19 +46,17 @@ class NpcFactoryWithConfig : public NpcFactory {
 };
 
 class KnightFactory final : public NpcFactoryWithConfig {
-  protected:
-    KnightFactory(std::shared_ptr<NpcPropertiesConfig> &conf)
-        : NpcFactoryWithConfig(conf) {};
-
   public:
-    static std::shared_ptr<NpcFactory> create() {
+    KnightFactory(ptr<NpcPropertiesConfig> &conf)
+        : NpcFactoryWithConfig(conf, "Knight") {}
+
+    static ptr<NpcFactory> create(ptr<NpcPropertiesConfig> &conf) {
         return std::static_pointer_cast<NpcFactory>(
-            std::make_shared<KnightFactory>());
+            std::make_shared<KnightFactory>(conf));
     }
 
-    std::shared_ptr<NPC> create_npc(const std::string &name, int x,
-                                    int y) override {
-        set_npc_type_name("Knight");
+    ptr<NPC> create_npc(const std::string &name, int x, int y) override {
+
         auto npc = Knight::create(name, x, y);
         set_properties(npc);
         return npc;
@@ -65,57 +64,53 @@ class KnightFactory final : public NpcFactoryWithConfig {
 };
 
 class FrogFactory final : public NpcFactoryWithConfig {
-  protected:
-    FrogFactory(std::shared_ptr<NpcPropertiesConfig> &conf)
-        : NpcFactoryWithConfig(conf) {};
-
   public:
-    static std::shared_ptr<NpcFactory> create() {
+    FrogFactory(ptr<NpcPropertiesConfig> &conf)
+        : NpcFactoryWithConfig(conf, "Frog") {}
+
+    static ptr<NpcFactory> create(ptr<NpcPropertiesConfig> &conf) {
         return std::static_pointer_cast<NpcFactory>(
-            std::make_shared<FrogFactory>());
+            std::make_shared<FrogFactory>(conf));
     }
 
-    std::shared_ptr<NPC> create_npc(const std::string &name, int x,
-                                    int y) override {
-        set_npc_type_name("Frog");
+    ptr<NPC> create_npc(const std::string &name, int x, int y) override {
         auto npc = Frog::create(name, x, y);
+        set_properties(npc);
         return npc;
     }
 };
 
 class DragonFactory final : public NpcFactoryWithConfig {
-  protected:
-    DragonFactory(std::shared_ptr<NpcPropertiesConfig> &conf)
-        : NpcFactoryWithConfig(conf) {};
-
   public:
-    static std::shared_ptr<NpcFactory> create() {
+    DragonFactory(ptr<NpcPropertiesConfig> &conf)
+        : NpcFactoryWithConfig(conf, "Dragon") {}
+
+    static ptr<NpcFactory> create(ptr<NpcPropertiesConfig> &conf) {
         return std::static_pointer_cast<NpcFactory>(
-            std::make_shared<DragonFactory>());
+            std::make_shared<DragonFactory>(conf));
     }
 
-    std::shared_ptr<NPC> create_npc(const std::string &name, int x,
-                                    int y) override {
-        set_npc_type_name("Dragon");
+    ptr<NPC> create_npc(const std::string &name, int x, int y) override {
         auto npc = Dragon::create(name, x, y);
+        set_properties(npc);
         return npc;
     }
 };
 
 class NpcGenerator {
   private:
-    std::unordered_map<NpcType, std::shared_ptr<NpcFactory>> factories;
-    NpcGenerator(const std::unordered_map<NpcType, std::shared_ptr<NpcFactory>>
-                     factories)
-        : factories(factories) {}
+    std::unordered_map<NpcType, ptr<NpcFactory>> factories;
 
   public:
-    static std::shared_ptr<NpcGenerator>
-    create(std::unordered_map<NpcType, std::shared_ptr<NpcFactory>> factories) {
+    NpcGenerator(const std::unordered_map<NpcType, ptr<NpcFactory>> factories)
+        : factories(factories) {}
+
+    static ptr<NpcGenerator>
+    create(std::unordered_map<NpcType, ptr<NpcFactory>> factories) {
         return std::make_shared<NpcGenerator>(factories);
     }
-    std::shared_ptr<NPC> create_npc(const NpcType &type,
-                                    const std::string &name, int x, int y) {
+    ptr<NPC> create_npc(const NpcType &type, const std::string &name, int x,
+                        int y) {
         return factories[type]->create_npc(name, x, y);
     }
 };

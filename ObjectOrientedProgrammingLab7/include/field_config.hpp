@@ -1,35 +1,14 @@
 #pragma once
+
+#include "fmt/core.h"
 #include "npc.hpp"
 #include <nlohmann/json.hpp>
-
-class FieldConfig;
-class JsonFieldConfig;
-class FieldConfigHandler;
-struct NpcFieldConfigData;
 
 struct NpcFieldConfigData {
     std::string name;
     NpcType type;
     int x;
     int y;
-};
-
-class FieldConfigHandler {
-  public:
-    static bool file_path_has_extension(const std::string &file_path,
-                                        const std::string &extension) {
-        std::filesystem::path path(file_path);
-        return path.extension() == extension;
-    }
-
-    static std::shared_ptr<FieldConfig>
-    create_config(const std::string &file_path) {
-        if (file_path_has_extension(file_path, ".json")) {
-            return JsonFieldConfig::create(file_path);
-        } else {
-            throw std::runtime_error("Invalid config path!");
-        }
-    }
 };
 
 class FieldConfig : std::enable_shared_from_this<FieldConfig> {
@@ -41,7 +20,11 @@ class FieldConfig : std::enable_shared_from_this<FieldConfig> {
 
 class JsonFieldConfig : public FieldConfig {
 
-  private:
+  public:
+    using json = nlohmann::json;
+
+    json field_config;
+
     explicit JsonFieldConfig(const std::string &file_path) {
         std::ifstream file(file_path);
         if (!file.is_open()) {
@@ -50,10 +33,6 @@ class JsonFieldConfig : public FieldConfig {
         }
         file >> field_config;
     }
-
-  public:
-    using json = nlohmann::json;
-    json field_config;
 
     static std::shared_ptr<FieldConfig> create(const std::string &file_path) {
         return std::static_pointer_cast<FieldConfig>(
@@ -79,6 +58,8 @@ class JsonFieldConfig : public FieldConfig {
     }
 
     std::vector<NpcFieldConfigData> get_field() override {
+        int max_x = get_field_max_x();
+        int max_y = get_field_max_y();
         std::vector<NpcFieldConfigData> npcs_data;
         if (!field_config.contains("field")) {
             throw std::runtime_error("Not found in configuration: 'field'");
@@ -104,12 +85,58 @@ class JsonFieldConfig : public FieldConfig {
                 throw std::runtime_error("Not found in configuration or not "
                                          "integer in configuration: 'y'");
             }
-            NpcFieldConfigData npc_data = {
-                npc.at("name").get<std::string>(),
-                StringToNpcType.at(npc.at("type").get<std::string>()),
-                npc.at("x").get<int>(), npc.at("y").get<int>()};
-            npcs_data.push_back(npc_data);
+
+            std::string name = npc.at("name").get<std::string>();
+            std::string string_type = npc.at("type").get<std::string>();
+            NpcType type =
+                StringToNpcType.at(npc.at("type").get<std::string>());
+            int x = npc.at("x").get<int>();
+            int y = npc.at("y").get<int>();
+
+            if (StringToNpcType.find(string_type) == StringToNpcType.end()) {
+                std::string message =
+                    fmt::format("Invalid type for npc in config: (name: {}, "
+                                "type: {}, x: {}, y: {})",
+                                name, string_type, x, y);
+                throw std::runtime_error(message);
+            }
+
+            if (x < 0 || x > max_x) {
+                std::string message = fmt::format(
+                    "x cooordinate out of field for npc in config: (name: {}, "
+                    "type: {}, x: {}, y: {}), max_x is {}",
+                    name, string_type, x, y, max_x);
+                throw std::runtime_error(message);
+            }
+
+            if (y < 0 || y > max_y) {
+                std::string message = fmt::format(
+                    "y cooordinate out of field for npc in config: (name: {}, "
+                    "type: {}, x: {}, y: {}), max_y is {}",
+                    name, string_type, x, y, max_y);
+                throw std::runtime_error(message);
+            }
+
+            npcs_data.push_back({name, type, x, y});
         }
         return npcs_data;
+    }
+};
+
+class FieldConfigHandler {
+  public:
+    static bool file_path_has_extension(const std::string &file_path,
+                                        const std::string &extension) {
+        std::filesystem::path path(file_path);
+        return path.extension() == extension;
+    }
+
+    static std::shared_ptr<FieldConfig>
+    create_config(const std::string &file_path) {
+        if (file_path_has_extension(file_path, ".json")) {
+            return JsonFieldConfig::create(file_path);
+        } else {
+            throw std::runtime_error("Invalid config path!");
+        }
     }
 };
