@@ -38,7 +38,7 @@ class WorldConfigurator {
     int get_max_x() const { return field_max_x; }
     int get_max_y() const { return field_max_y; }
 
-        std::shared_mutex mtx;
+    std::shared_mutex mtx;
     // npc config
     std::string npc_properties_config_file_path_env = "NPC_PROPERTIES_CONFIG";
     std::string npc_properties_config_file_path;
