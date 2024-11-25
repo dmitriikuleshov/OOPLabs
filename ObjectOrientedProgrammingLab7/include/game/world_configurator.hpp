@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <filesystem>
+#include <shared_mutex>
 #include <string>
 
 #include "npc.hpp"
@@ -13,9 +14,9 @@
 #include "attacker_visitors.hpp"
 #include "factories.hpp"
 
-class GameWorldManager {
+class WorldConfigurator {
   public:
-    GameWorldManager() {
+    WorldConfigurator() {
         define_npc_properties_config();
         define_field_config();
         define_attacker_visitors();
@@ -25,8 +26,8 @@ class GameWorldManager {
         generate_npcs();
     }
 
-    static ptr<GameWorldManager> create() {
-        return std::make_shared<GameWorldManager>();
+    static ptr<WorldConfigurator> create() {
+        return std::make_shared<WorldConfigurator>();
     }
 
     std::vector<ptr<NPC>> get_npcs() const { return npcs; }
@@ -37,7 +38,7 @@ class GameWorldManager {
     int get_max_x() const { return field_max_x; }
     int get_max_y() const { return field_max_y; }
 
-    //  private:
+        std::shared_mutex mtx;
     // npc config
     std::string npc_properties_config_file_path_env = "NPC_PROPERTIES_CONFIG";
     std::string npc_properties_config_file_path;

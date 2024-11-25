@@ -1,8 +1,8 @@
 #ifndef GAME_HPP
 #define GAME_HPP
 
-#include "game_world_manager.hpp"
-#include "game_world_printer.hpp"
+#include "print_manager.hpp"
+#include "world_configurator.hpp"
 #include <atomic>
 #include <chrono>
 #include <mutex>
@@ -17,11 +17,12 @@ struct FightEvent {
 
 class FightManager {
   private:
-    ptr<GameWorldManager> gwm;
+    ptr<const std::atomic<bool>> stop_flag;
+    ptr<WorldConfigurator> world_conf;
     std::queue<FightEvent> events;
-    std::shared_mutex mtx;
-    std::mutex init_mtx;
+    std::shared_mutex event_mtx;
 
+    std::mutex init_mtx;
     FightManager() = default;
 
   public:
@@ -31,21 +32,21 @@ class FightManager {
         return instance;
     }
 
-    void initialize(ptr<GameWorldManager> &world_manager) {
+    void initialize(ptr<WorldConfigurator> &wc,
+                    const ptr<const std::atomic<bool>> &stop) {
         std::lock_guard<std::mutex> lock(init_mtx);
-        if (!gwm) {
-            gwm = world_manager;
-        }
+        stop_flag = stop;
+        world_conf = wc;
     }
 
     void add_event(FightEvent &&event) {
-        std::lock_guard<std::shared_mutex> lock(mtx);
+        std::lock_guard<std::shared_mutex> lock(event_mtx);
         events.push(std::move(event));
     }
 
     std::optional<FightEvent> get_event() {
         std::optional<FightEvent> event;
-        std::lock_guard<std::shared_mutex> lock(mtx);
+        std::lock_guard<std::shared_mutex> lock(event_mtx);
         if (!events.empty()) {
             event = events.front();
             events.pop();
@@ -54,7 +55,7 @@ class FightManager {
     }
 
     void operator()() {
-        while (true) {
+        while (!(stop_flag && stop_flag->load())) {
             auto event = get_event();
 
             if (event) {
@@ -62,38 +63,45 @@ class FightManager {
                 auto defender = event->defender;
                 if (attacker->is_alive() && defender->is_alive()) {
                     auto visitor =
-                        gwm->get_attacker_visitor(attacker->get_type());
+                        world_conf->get_attacker_visitor(attacker->get_type());
                     defender->accept(visitor);
                 }
             } else {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                std::this_thread::sleep_for(std::chrono::milliseconds(300));
             }
         }
     }
 };
 
-class GameMoveManager {
-  public:
-    const std::vector<ptr<NPC>> &npcs;
-    std::unordered_map<NpcType, ptr<AttackerVisitor>> attacker_visitors;
+class MoveManager {
+  private:
+    ptr<WorldConfigurator> world_conf;
+    ptr<const std::atomic<bool>> stop_flag;
     int max_x;
     int max_y;
-    std::mutex &mtx;
 
-    GameMoveManager(const std::vector<ptr<NPC>> &npcs, int max_x, int max_y,
-                    std::mutex &mutex)
-        : npcs(npcs), max_x(max_x), max_y(max_y), mtx(mutex) {}
+    std::mutex init_mtx;
+    MoveManager() = default;
 
-    GameMoveManager() = delete;
+  public:
+    // Singleton
+    static MoveManager &get() {
+        static MoveManager instance;
+        return instance;
+    }
 
-    static ptr<GameMoveManager> create(const std::vector<ptr<NPC>> &npcs,
-                                       int max_x, int max_y, std::mutex &mtx) {
-        return std::make_shared<GameMoveManager>(npcs, max_x, max_y, mtx);
+    void initialize(ptr<WorldConfigurator> &wc,
+                    const ptr<const std::atomic<bool>> &stop) {
+        std::lock_guard<std::mutex> lock(init_mtx);
+        stop_flag = stop;
+        world_conf = wc;
+        max_x = world_conf->get_max_x();
+        max_y = world_conf->get_max_y();
     }
 
     void prepare_for_fight() {
-        for (auto npc : npcs) {
-            for (auto other : npcs) {
+        for (auto npc : world_conf->npcs) {
+            for (auto other : world_conf->npcs) {
                 if (other != npc) {
                     if (npc->is_alive() && other->is_alive() &&
                         npc->is_close(other)) {
@@ -106,25 +114,25 @@ class GameMoveManager {
 
     void move_npcs() {
         int move_distance;
-        for (auto npc : npcs) {
+        for (auto npc : world_conf->npcs) {
             move_distance = npc->get_move_distance();
             if (npc->is_alive()) {
                 int shift_x =
                     (std::rand() % (2 * move_distance + 1)) - move_distance;
                 int shift_y =
+
                     (std::rand() % (2 * move_distance + 1)) - move_distance;
                 npc->move(shift_x, shift_y, max_x, max_y);
             }
         }
     }
 
-    void start_moving() {
-        while (true) {
-            std::lock_guard<std::mutex> lck(mtx);
+    void operator()() {
+        while (!(stop_flag && stop_flag->load())) {
             move_npcs();
             // lets fight;
             prepare_for_fight();
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds(300));
         }
     }
 };
@@ -134,36 +142,26 @@ class Game {
     std::thread fight_thread;
     std::thread move_thread;
     std::thread print_thread;
-    std::mutex print_mutex;
-    std::mutex move_mutex;
-    ptr<GameWorldManager> gwm;
-    ptr<GameMoveManager> game_move_manager;
-    ptr<GameWorldPrinter> printer;
-    std::vector<ptr<NPC>> npcs;
-    std::atomic<bool> stop_flag;
-    int max_x;
-    int max_y;
+    ptr<std::atomic<bool>> stop_flag;
+    ptr<WorldConfigurator> world_conf;
+    void stop() { stop_flag->store(true); }
 
   public:
-    Game() : stop_flag(false) {
-        gwm = GameWorldManager::create();
-        npcs = gwm->get_npcs();
-        max_x = gwm->get_max_x();
-        max_y = gwm->get_max_y();
-        printer = GameWorldPrinter::create(npcs, max_x, max_y, print_mutex);
-        game_move_manager =
-            GameMoveManager::create(npcs, max_x, max_y, move_mutex);
-        FightManager::get().initialize(gwm);
+    Game() {
+        stop_flag = std::make_shared<std::atomic<bool>>(false);
+        world_conf = WorldConfigurator::create();
+        PrintManager::get().initialize(world_conf, stop_flag);
+        MoveManager::get().initialize(world_conf, stop_flag);
+        FightManager::get().initialize(world_conf, stop_flag);
     }
 
     void run() {
         fight_thread = std::thread(std::ref(FightManager::get()));
-        move_thread =
-            std::thread([this]() { game_move_manager->start_moving(); });
-        print_thread =
-            std::thread([this]() { printer->start_printing_field(); });
+        move_thread = std::thread(std::ref(MoveManager::get()));
+        print_thread = std::thread(std::ref(PrintManager::get()));
 
-        std::this_thread::sleep_for(std::chrono::seconds(30));
+        std::this_thread::sleep_for(std::chrono::seconds(10));
+        stop();
 
         print_thread.join();
         move_thread.join();
