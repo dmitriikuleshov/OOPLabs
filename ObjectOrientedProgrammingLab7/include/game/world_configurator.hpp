@@ -19,14 +19,13 @@ class WorldConfigurator {
     WorldConfigurator();
 
     static ptr<WorldConfigurator> create();
-    std::vector<ptr<NPC>> &get_npcs();
     ptr<AttackerVisitor> get_attacker_visitor(NpcType type) const;
-    int get_max_x() const;
+    const int get_max_x() const;
     int get_max_y() const;
 
     std::vector<ptr<NPC>> npcs;
 
-   private:
+  private:
     // std::shared_mutex mtx;
     // npc config
     std::string npc_properties_config_file_path_env = "NPC_PROPERTIES_CONFIG";
