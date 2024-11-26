@@ -2,7 +2,7 @@
 #define VISITOR_HPP
 
 #include "npc.hpp"
-#include "npc_properties_config/npc_properties_config.hpp"
+#include "npc_properties_configs.hpp"
 #include "npc_types.hpp"
 
 class AttackerVisitor {

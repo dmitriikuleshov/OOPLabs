@@ -5,7 +5,7 @@
 #include "frog.hpp"
 #include "knight.hpp"
 #include "npc.hpp"
-#include "npc_properties_config.hpp"
+#include "npc_properties_configs.hpp"
 
 class NpcFactory : public std::enable_shared_from_this<NpcFactory> {
   public:

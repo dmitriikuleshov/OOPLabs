@@ -46,10 +46,9 @@ set(TEST_DIR "${CMAKE_SOURCE_DIR}/tests")
 
 include_directories(${INCLUDE_DIR})
 include_directories(${INCLUDE_DIR}/factories)
-include_directories(${INCLUDE_DIR}/field_config)
+include_directories(${INCLUDE_DIR}/configs)
 include_directories(${INCLUDE_DIR}/game)
 include_directories(${INCLUDE_DIR}/npc)
-include_directories(${INCLUDE_DIR}/npc_properties_config)
 include_directories(${INCLUDE_DIR}/observers)
 include_directories(${INCLUDE_DIR}/visitors)
 

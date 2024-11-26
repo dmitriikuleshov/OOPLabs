@@ -1,5 +1,5 @@
-#ifndef GAME_WORLD_MANAGER_HPP
-#define GAME_WORLD_MANAGER_HPP
+#ifndef WORLD_CONFIGURATOR_HPP
+#define WORLD_CONFIGURATOR_HPP
 
 #include <cstdlib>
 #include <filesystem>
@@ -8,8 +8,8 @@
 
 #include "npc.hpp"
 
-#include "field_config.hpp"
-#include "npc_properties_config.hpp"
+#include "field_configs.hpp"
+#include "npc_properties_configs.hpp"
 
 #include "attacker_visitors.hpp"
 #include "factories.hpp"
@@ -134,4 +134,4 @@ class WorldConfigurator {
     }
 };
 
-#endif // GAME_WORLD_MANAGER_HPP
+#endif // WORLD_CONFIGURATOR

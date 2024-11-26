@@ -1,5 +1,5 @@
-#ifndef GAME_WORLD_PRINTER_HPP
-#define GAME_WORLD_PRINTER_HPP
+#ifndef PRINT_MANAGER_HPP
+#define PRINT_MANAGER_HPP
 
 #include "npc.hpp"
 #include "world_configurator.hpp"
@@ -93,4 +93,4 @@ class PrintManager {
     }
 };
 
-#endif // GAME_WORLD_PRINTER_HPP
+#endif // PRINT_MANAGER_HPP
