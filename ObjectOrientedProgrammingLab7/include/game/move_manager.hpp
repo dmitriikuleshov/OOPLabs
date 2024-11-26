@@ -16,8 +16,7 @@ class MoveManager {
 
     void initialize(ptr<WorldConfigurator> &wc,
                     const ptr<const std::atomic<bool>> &stop);
-    void prepare_for_fight();
-    void move_npcs();
+
     void operator()();
 
   private:
@@ -28,6 +27,9 @@ class MoveManager {
 
     std::mutex init_mtx;
     MoveManager() = default;
+
+    void prepare_for_fight();
+    void move_npcs();
 };
 
 #endif // MOVE_MANAGER_HPP
