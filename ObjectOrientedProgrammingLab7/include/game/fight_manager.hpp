@@ -2,6 +2,7 @@
 #ifndef FIGHT_MANAGER_HPP
 #define FIGHT_MANAGER_HPP
 
+#include "game_state.hpp"
 #include "world_configurator.hpp"
 #include <atomic>
 #include <chrono>
@@ -20,12 +21,12 @@ class FightManager {
     // Singleton
     static FightManager &get();
     void initialize(ptr<WorldConfigurator> &wc,
-                    const ptr<const std::atomic<bool>> &stop);
+                    const ptr<const std::atomic<GameState>> &stop);
     void add_event(FightEvent &&event);
     void operator()();
 
   private:
-    ptr<const std::atomic<bool>> stop_flag;
+    ptr<const std::atomic<GameState>> game_state;
     ptr<WorldConfigurator> world_conf;
     std::queue<FightEvent> events;
     std::shared_mutex event_mtx;

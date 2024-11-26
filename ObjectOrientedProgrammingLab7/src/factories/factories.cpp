@@ -25,6 +25,7 @@ ptr<NpcFactory> KnightFactory::create(ptr<NpcPropertiesConfig> &conf) {
 ptr<NPC> KnightFactory::create_npc(const std::string &name, int x, int y) {
     auto npc = Knight::create(name, x, y);
     set_properties(npc);
+    npc->subscribe(FileObserver::get());
     return npc;
 }
 
@@ -41,6 +42,7 @@ ptr<NpcFactory> FrogFactory::create(ptr<NpcPropertiesConfig> &conf) {
 ptr<NPC> FrogFactory::create_npc(const std::string &name, int x, int y) {
     auto npc = Frog::create(name, x, y);
     set_properties(npc);
+    npc->subscribe(FileObserver::get());
     return npc;
 }
 
@@ -57,6 +59,7 @@ ptr<NpcFactory> DragonFactory::create(ptr<NpcPropertiesConfig> &conf) {
 ptr<NPC> DragonFactory::create_npc(const std::string &name, int x, int y) {
     auto npc = Dragon::create(name, x, y);
     set_properties(npc);
+    npc->subscribe(FileObserver::get());
     return npc;
 }
 

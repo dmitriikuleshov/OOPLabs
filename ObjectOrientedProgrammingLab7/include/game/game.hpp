@@ -2,6 +2,7 @@
 #define GAME_HPP
 
 #include "fight_manager.hpp"
+#include "game_state.hpp"
 #include "move_manager.hpp"
 #include "print_manager.hpp"
 #include "world_configurator.hpp"
@@ -15,8 +16,9 @@ class Game {
     std::thread fight_thread;
     std::thread move_thread;
     std::thread print_thread;
-    ptr<std::atomic<bool>> stop_flag;
+    ptr<std::atomic<GameState>> game_state;
     ptr<WorldConfigurator> world_conf;
+    int time_limit;
     void stop();
 
   public:

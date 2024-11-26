@@ -3,6 +3,7 @@
 
 #include "attacker_visitors.hpp"
 #include "npc_types.hpp"
+#include "observers.hpp"
 #include <cmath>
 #include <cstring>
 #include <fstream>
@@ -19,14 +20,10 @@ class Dragon;
 class Knight;
 class Frog;
 
+class FightObserver;
 class AttackerVisitor;
 
 using set_t = std::set<ptr<NPC>>;
-
-struct IFightObserver {
-    virtual void on_fight(const ptr<NPC> attacker, const ptr<NPC> defender,
-                          bool win) = 0;
-};
 
 class NPC : public std::enable_shared_from_this<NPC> {
   protected:
@@ -41,7 +38,7 @@ class NPC : public std::enable_shared_from_this<NPC> {
     unsigned int kill_distance{0};
 
     std::unordered_set<NpcType> enemies;
-    std::vector<ptr<IFightObserver>> observers;
+    std::vector<ptr<FightObserver>> observers;
 
   public:
     NPC(NpcType t, const char letter, const std::string &name, int x, int y);
@@ -63,8 +60,8 @@ class NPC : public std::enable_shared_from_this<NPC> {
 
     unsigned int throw_dice() const noexcept;
 
-    void subscribe(const ptr<IFightObserver> &observer);
-    void fight_notify(const ptr<NPC> defender, bool win) const;
+    void subscribe(const ptr<FightObserver> &observer);
+    void fight_notify(const ptr<NPC> defender) const;
 
     virtual void accept(ptr<AttackerVisitor> &visitor) = 0;
     virtual void print() = 0;

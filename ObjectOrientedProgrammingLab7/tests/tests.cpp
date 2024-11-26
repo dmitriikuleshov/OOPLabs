@@ -1,69 +1,79 @@
-// #include <gtest/gtest.h>
+#include <gtest/gtest.h>
 
-// #include "dragon.hpp"
-// #include "frog.hpp"
-// #include "knight.hpp"
-// #include "npc.hpp"
-// #include "visitor.hpp"
+#include "attacker_visitors.hpp"
+#include "dragon.hpp"
+#include "frog.hpp"
+#include "knight.hpp"
+#include "npc.hpp"
+#include <filesystem>
 
-// TEST(NPCTest, IsCloseTest) {
-//     auto knight = std::make_shared<Knight>("Knight1", 0, 14);
-//     auto frog = std::make_shared<Frog>("Frog1", 40, 11);
-//     auto dragon = std::make_shared<Dragon>("Dragon1", 88, 15);
+auto config =
+    NpcPropertiesConfigHandler::create_config(getenv("NPC_PROPERTIES_CONFIG"));
 
-//     ASSERT_TRUE(knight->is_close(frog, 50));
-//     ASSERT_TRUE(frog->is_close(dragon, 100));
-//     ASSERT_FALSE(dragon->is_close(knight, 25));
-// }
+TEST(NPCTest, IsCloseTest) {
 
-// TEST(NPCTest, AcceptTest) {
-//     auto knight = std::make_shared<Knight>("Knight1", 0, 14);
-//     auto frog = std::make_shared<Frog>("Frog1", 40, 11);
-//     auto dragon = std::make_shared<Dragon>("Dragon1", 88, 15);
+    auto knight = Knight::create("Knight1", 0, 14);
+    auto frog = Frog::create("Frog1", 40, 11);
+    auto dragon = Dragon::create("Dragon1", 88, 15);
 
-//     // FROG
-//     ASSERT_TRUE(knight->accept(frog));
-//     ASSERT_TRUE(dragon->accept(frog));
-//     ASSERT_TRUE(frog->accept(frog));
+    knight->set_kill_distance(50);
+    frog->set_kill_distance(100);
+    dragon->set_kill_distance(25);
 
-//     // DRAGON
-//     ASSERT_TRUE(knight->accept(dragon));
-//     ASSERT_FALSE(dragon->accept(dragon));
-//     ASSERT_FALSE(frog->accept(dragon));
+    ASSERT_TRUE(knight->is_close(frog));
+    ASSERT_TRUE(frog->is_close(dragon));
+    ASSERT_FALSE(dragon->is_close(knight));
+}
 
-//     // KNIGHT
-//     ASSERT_TRUE(dragon->accept(knight));
-//     ASSERT_FALSE(knight->accept(knight));
-//     ASSERT_FALSE(frog->accept(knight));
-// }
+TEST(NPCTest, AcceptTestDragon) {
+    auto knight = Knight::create("Knight1", 10, 10);
+    auto frog = Frog::create("Frog1", 40, 11);
+    auto dragon = Dragon::create("Dragon1", 88, 15);
 
-// TEST(visitor_test, visit_test) {
-//     std::shared_ptr<NPC> knight, frog, dragon;
-//     knight = std::make_shared<Knight>("Knight1", 0, 14);
-//     frog = std::make_shared<Frog>("Frog1", 40, 11);
-//     dragon = std::make_shared<Dragon>("Dragon1", 88, 15);
-//     std::shared_ptr<Visitor> knight_visitor, frog_visitor, dragon_visitor;
-//     knight_visitor = std::make_shared<KnightVisitor>();
-//     frog_visitor = std::make_shared<FrogVisitor>();
-//     dragon_visitor = std::make_shared<DragonVisitor>();
+    auto dragon_visitor = DragonAttackerVisitor::create(config);
 
-//     // FROG
-//     ASSERT_TRUE(frog_visitor->visit(knight));
-//     ASSERT_TRUE(frog_visitor->visit(dragon));
-//     ASSERT_TRUE(frog_visitor->visit(frog));
+    knight->accept(dragon_visitor);
+    dragon->accept(dragon_visitor);
+    frog->accept(dragon_visitor);
 
-//     // DRAGON
-//     ASSERT_TRUE(dragon_visitor->visit(knight));
-//     ASSERT_FALSE(dragon_visitor->visit(dragon));
-//     ASSERT_FALSE(dragon_visitor->visit(frog));
+    ASSERT_TRUE(frog->is_alive());
+    ASSERT_TRUE(dragon->is_alive());
+    ASSERT_FALSE(knight->is_alive());
+}
 
-//     // KNIGHT
-//     ASSERT_TRUE(knight_visitor->visit(dragon));
-//     ASSERT_FALSE(knight_visitor->visit(frog));
-//     ASSERT_FALSE(knight_visitor->visit(knight));
-// }
+TEST(NPCTest, AcceptTestKnight) {
+    auto knight = Knight::create("Knight1", 10, 10);
+    auto frog = Frog::create("Frog1", 40, 11);
+    auto dragon = Dragon::create("Dragon1", 88, 15);
 
-// int main(int argc, char **argv) {
-//     ::testing::InitGoogleTest(&argc, argv);
-//     return RUN_ALL_TESTS();
-// }
+    auto knight_visitor = KnightAttackerVisitor::create(config);
+
+    knight->accept(knight_visitor);
+    dragon->accept(knight_visitor);
+    frog->accept(knight_visitor);
+
+    ASSERT_TRUE(frog->is_alive());
+    ASSERT_FALSE(dragon->is_alive());
+    ASSERT_TRUE(knight->is_alive());
+}
+
+TEST(NPCTest, AcceptTestFrog) {
+    auto knight = Knight::create("Knight1", 10, 10);
+    auto frog = Frog::create("Frog1", 40, 11);
+    auto dragon = Dragon::create("Dragon1", 88, 15);
+
+    auto frog_visitor = FrogAttackerVisitor::create(config);
+
+    knight->accept(frog_visitor);
+    dragon->accept(frog_visitor);
+    frog->accept(frog_visitor);
+
+    ASSERT_FALSE(frog->is_alive());
+    ASSERT_FALSE(dragon->is_alive());
+    ASSERT_FALSE(knight->is_alive());
+}
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

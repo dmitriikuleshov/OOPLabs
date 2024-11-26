@@ -6,9 +6,9 @@ FightManager &FightManager::get() {
 }
 
 void FightManager::initialize(ptr<WorldConfigurator> &wc,
-                              const ptr<const std::atomic<bool>> &stop) {
+                              const ptr<const std::atomic<GameState>> &stop) {
     std::lock_guard<std::mutex> lock(init_mtx);
-    stop_flag = stop;
+    game_state = stop;
     world_conf = wc;
 }
 
@@ -28,7 +28,7 @@ std::optional<FightEvent> FightManager::get_event() {
 }
 
 void FightManager::operator()() {
-    while (!(stop_flag && stop_flag->load())) {
+    while (game_state->load() == GameState::Running) {
         auto event = get_event();
 
         if (event) {
@@ -38,6 +38,7 @@ void FightManager::operator()() {
                 auto visitor =
                     world_conf->get_attacker_visitor(attacker->get_type());
                 defender->accept(visitor);
+                attacker->fight_notify(defender);
             }
         } else {
             std::this_thread::sleep_for(std::chrono::milliseconds(300));

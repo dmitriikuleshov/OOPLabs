@@ -6,9 +6,9 @@ MoveManager &MoveManager::get() {
 }
 
 void MoveManager::initialize(ptr<WorldConfigurator> &wc,
-                             const ptr<const std::atomic<bool>> &stop) {
+                             const ptr<std::atomic<GameState>> &stop) {
     std::lock_guard<std::mutex> lock(init_mtx);
-    stop_flag = stop;
+    game_state = stop;
     world_conf = wc;
     max_x = world_conf->get_max_x();
     max_y = world_conf->get_max_y();
@@ -17,9 +17,9 @@ void MoveManager::initialize(ptr<WorldConfigurator> &wc,
 void MoveManager::prepare_for_fight() {
     for (auto npc : world_conf->npcs) {
         for (auto other : world_conf->npcs) {
-            if (other != npc) {
-                if (npc->is_alive() && other->is_alive() &&
-                    npc->is_close(other)) {
+            if (other != npc && npc->is_alive() && other->is_alive() &&
+                npc->is_close(other)) {
+                if (npc->throw_dice() > other->throw_dice()) {
                     FightManager::get().add_event({npc, other});
                 }
             }
@@ -42,8 +42,25 @@ void MoveManager::move_npcs() {
     }
 }
 
+void MoveManager::update_game_state() {
+    size_t counter;
+    for (auto npc : world_conf->npcs) {
+        if (npc->is_alive()) {
+            ++counter;
+        }
+    }
+    switch (counter) {
+    case 0:
+        game_state->store(GameState::AllDead);
+        break;
+    case 1:
+        game_state->store(GameState::OneNpcLeft);
+        break;
+    }
+}
+
 void MoveManager::operator()() {
-    while (!(stop_flag && stop_flag->load())) {
+    while (game_state->load() == GameState::Running) {
         move_npcs();
         // lets fight;
         prepare_for_fight();

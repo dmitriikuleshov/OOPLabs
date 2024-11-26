@@ -6,9 +6,9 @@ PrintManager &PrintManager::get() {
 }
 
 void PrintManager::initialize(ptr<WorldConfigurator> &wc,
-                              const ptr<const std::atomic<bool>> &stop) {
+                              const ptr<const std::atomic<GameState>> &stop) {
     std::lock_guard<std::mutex> lock(init_mtx);
-    stop_flag = stop;
+    game_state = stop;
     world_conf = wc;
     max_x = world_conf->get_max_x();
     max_y = world_conf->get_max_y();
@@ -17,7 +17,7 @@ void PrintManager::initialize(ptr<WorldConfigurator> &wc,
 }
 
 void PrintManager::operator()() {
-    while (!(stop_flag && stop_flag->load())) {
+    while (game_state->load() == GameState::Running) {
         load_field();
         print_world();
         std::this_thread::sleep_for(std::chrono::milliseconds(300));
@@ -62,11 +62,52 @@ void PrintManager::print_world() {
 }
 
 void PrintManager::print_winners() {
-    std::cout << " ----------------------- WINNERS"
-                 " ----------------------- \n";
+    std::vector<ptr<NPC>> survivors;
     for (const auto &npc : world_conf->npcs) {
         if (npc->is_alive()) {
-            npc->print();
+            survivors.push_back(npc);
         }
     }
+
+    std::cout << std::endl;
+    std::cout
+        << "|===========================================================|\n";
+    std::cout
+        << "|                         GAME OVER                         |\n";
+    std::cout
+        << "|===========================================================|\n";
+
+    switch (survivors.size()) {
+    case 0:
+        std::cout << "No survivors! The battlefield is silent...\n";
+        std::cout << "---------------------------------------------------------"
+                     "----\n";
+        break;
+    case 1:
+        std::cout << "                *** ULTIMATE WINNER ***              \n";
+        std::cout << "---------------------------------------------------------"
+                     "----\n";
+        break;
+    default:
+        std::cout
+            << "|                       TIMEOUT REACHED                     |"
+            << std::endl;
+        std::cout << "|                       SURVIVING NPCs ("
+                  << survivors.size() << ")                  |\n";
+        std::cout << "---------------------------------------------------------"
+                     "----\n";
+    }
+
+    for (const auto &npc : survivors) {
+        npc->print();
+    }
+
+    if (survivors.size() > 1) {
+        std::cout << "The battle ends, but the survivors live to fight another "
+                     "day!\n";
+    }
+
+    std::cout
+        << "=============================================================\n";
+    std::cout << std::endl;
 }

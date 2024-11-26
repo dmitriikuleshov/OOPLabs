@@ -72,14 +72,16 @@ void NPC::must_die() {
 
 unsigned int NPC::throw_dice() const noexcept { return std::rand() % 6 + 1; }
 
-void NPC::subscribe(const ptr<IFightObserver> &observer) {
+void NPC::subscribe(const ptr<FightObserver> &observer) {
     observers.push_back(observer);
 }
 
-void NPC::fight_notify(const ptr<NPC> defender, bool win) const {
-    for (auto &o : observers)
-        o->on_fight(std::const_pointer_cast<NPC>(shared_from_this()), defender,
-                    win);
+void NPC::fight_notify(const ptr<NPC> defender) const {
+    if (!defender->is_alive()) {
+        for (auto &o : observers)
+            o->on_fight(std::const_pointer_cast<NPC>(shared_from_this()),
+                        defender);
+    }
 }
 
 void NPC::save(std::ostream &os) {

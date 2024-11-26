@@ -1,13 +1,14 @@
 #include "game.hpp"
 
-void Game::stop() { stop_flag->store(true); }
+void Game::stop() { game_state->store(GameState::Timeout); }
 
 Game::Game() {
-    stop_flag = std::make_shared<std::atomic<bool>>(false);
+    time_limit = 30;
+    game_state = std::make_shared<std::atomic<GameState>>(GameState::Running);
     world_conf = WorldConfigurator::create();
-    PrintManager::get().initialize(world_conf, stop_flag);
-    MoveManager::get().initialize(world_conf, stop_flag);
-    FightManager::get().initialize(world_conf, stop_flag);
+    PrintManager::get().initialize(world_conf, game_state);
+    MoveManager::get().initialize(world_conf, game_state);
+    FightManager::get().initialize(world_conf, game_state);
 }
 
 void Game::run() {
@@ -15,8 +16,16 @@ void Game::run() {
     move_thread = std::thread(std::ref(MoveManager::get()));
     print_thread = std::thread(std::ref(PrintManager::get()));
 
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    stop();
+    auto start_time = std::chrono::steady_clock::now();
+    const auto timeout = std::chrono::seconds(time_limit);
+
+    while (game_state->load() == GameState::Running) {
+        auto elapsed_time = std::chrono::steady_clock::now() - start_time;
+        if (elapsed_time >= timeout) {
+            stop();
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+    }
 
     print_thread.join();
     move_thread.join();

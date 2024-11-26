@@ -3,49 +3,26 @@
 
 #include "npc.hpp"
 
-class TextObserver final : public IFightObserver {
-  private:
-    TextObserver() {};
-
-  public:
-    static ptr<IFightObserver> get() {
-        static TextObserver instance;
-        return ptr<IFightObserver>(&instance, [](IFightObserver *) {});
-    }
-
-    void on_fight(const ptr<NPC> attacker, const ptr<NPC> defender,
-                  bool win) override {
-        if (win) {
-            std::cout << std::endl << "Murder --------" << std::endl;
-            std::cout << "killer: ";
-            attacker->print();
-            std::cout << "victim: ";
-            defender->print();
-        }
-    }
+struct FightObserver {
+    virtual void on_fight(const ptr<NPC> attacker, const ptr<NPC> defender) = 0;
 };
 
-class FileObserver final : public IFightObserver {
+class TextObserver final : public FightObserver {
   private:
-    FileObserver() {};
+    TextObserver();
 
   public:
-    static ptr<IFightObserver> get() {
-        static FileObserver instance;
-        return ptr<IFightObserver>(&instance, [](IFightObserver *) {});
-    }
+    static ptr<FightObserver> get();
+    void on_fight(const ptr<NPC> attacker, const ptr<NPC> defender) override;
+};
 
-    void on_fight(const ptr<NPC> attacker, const ptr<NPC> defender,
-                  bool win) override {
-        if (win) {
-            std::ofstream fs("log.txt", std::ios::app);
-            fs << std::endl
-               << "Murder --------" << std::endl
-               << "killer: " << *attacker << std::endl
-               << "victim: " << *defender;
-            fs.close();
-        }
-    }
+class FileObserver final : public FightObserver {
+  private:
+    FileObserver();
+
+  public:
+    static ptr<FightObserver> get();
+    void on_fight(const ptr<NPC> attacker, const ptr<NPC> defender) override;
 };
 
 #endif // OBSERVERS_HPP
