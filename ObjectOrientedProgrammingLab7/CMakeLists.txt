@@ -48,7 +48,7 @@ include_directories(${INCLUDE_DIR})
 include_directories(${INCLUDE_DIR}/factories)
 include_directories(${INCLUDE_DIR}/configs)
 include_directories(${INCLUDE_DIR}/game)
-include_directories(${INCLUDE_DIR}/npc)
+include_directories(${INCLUDE_DIR}/npcs)
 include_directories(${INCLUDE_DIR}/observers)
 include_directories(${INCLUDE_DIR}/visitors)
 

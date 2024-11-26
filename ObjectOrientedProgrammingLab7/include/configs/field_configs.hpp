@@ -1,5 +1,5 @@
-#ifndef FIELD_CONFIG_HPP
-#define FIELD_CONFIG_HPP
+#ifndef FIELD_CONFIGS_HPP
+#define FIELD_CONFIGS_HPP
 
 #include "fmt/core.h"
 #include "npc.hpp"

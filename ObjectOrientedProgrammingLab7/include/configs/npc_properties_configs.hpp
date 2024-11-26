@@ -1,5 +1,5 @@
-#ifndef NPC_PROPERTIES_CONFIG_HPP
-#define NPC_PROPERTIES_CONFIG_HPP
+#ifndef NPC_PROPERTIES_CONFIGS_HPP
+#define NPC_PROPERTIES_CONFIGS_HPP
 
 #include "npc_types.hpp"
 #include <fstream>
