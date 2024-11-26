@@ -18,7 +18,7 @@ ptr<AttackerVisitor>
 WorldConfigurator::get_attacker_visitor(NpcType type) const {
     return attacker_visitors.at(type);
 }
-const int WorldConfigurator::get_max_x() const { return field_max_x; }
+int WorldConfigurator::get_max_x() const { return field_max_x; }
 int WorldConfigurator::get_max_y() const { return field_max_y; }
 
 std::string WorldConfigurator::get_config_file_path(const std::string &env) {

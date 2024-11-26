@@ -20,7 +20,7 @@ class WorldConfigurator {
 
     static ptr<WorldConfigurator> create();
     ptr<AttackerVisitor> get_attacker_visitor(NpcType type) const;
-    const int get_max_x() const;
+    int get_max_x() const;
     int get_max_y() const;
 
     std::vector<ptr<NPC>> npcs;
