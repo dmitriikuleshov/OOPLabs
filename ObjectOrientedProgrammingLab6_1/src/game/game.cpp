@@ -7,7 +7,7 @@ void Game::run() {
     save("npc.txt");
     std::cout << "=== Initial NPC List ===\n" << std::endl;
     for (const auto &npc : world_conf->npcs) {
-        npc->print();
+        std::cout << *npc;
     }
     std::cout << std::endl;
     std::cout << "=== Starting Battles ===\n\n" << std::endl;
@@ -21,7 +21,7 @@ void Game::run() {
     if (!all_dead()) {
         for (const auto &npc : world_conf->npcs) {
             if (npc->is_alive()) {
-                npc->print();
+                std::cout << *npc;
             }
         }
     } else {
