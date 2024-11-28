@@ -50,7 +50,7 @@ void Game::fight() {
     int alive_npcs_counter = world_conf->npcs.size();
 
     for (size_t distance = 20; (distance <= 100) && !all_dead();
-         distance += 10) {
+         distance += distance_increase) {
         set_kill_distance(distance);
         std::vector<ptr<NPC>> dead_list;
         for (const auto &attacker : world_conf->npcs) {

@@ -18,7 +18,7 @@ class Game {
     void fight();
     bool all_dead();
     void set_kill_distance(int distance);
-    int distance_increase = 20;
+    int distance_increase = 10;
 
   public:
     Game();
