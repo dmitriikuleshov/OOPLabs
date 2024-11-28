@@ -7,7 +7,7 @@ void Game::run() {
     save("npc.txt");
     std::cout << "=== Initial NPC List ===\n" << std::endl;
     for (const auto &npc : world_conf->npcs) {
-        std::cout << *npc;
+        std::cout << *npc << std::endl;
     }
     std::cout << std::endl;
     std::cout << "=== Starting Battles ===\n\n" << std::endl;
