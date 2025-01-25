@@ -1,0 +1,17 @@
+{
+	"Dragon": {
+		"move_distance": 50,
+		"kill_distance": 30,
+		"enemies": ["Knight"]
+	},
+	"Knight": {
+		"move_distance": 30,
+		"kill_distance": 10,
+		"enemies": ["Dragon"]
+	},
+	"Frog": {
+		"move_distance": 1,
+		"kill_distance": 10,
+		"enemies": ["Knight", "Frog", "Dragon"]
+	}
+}

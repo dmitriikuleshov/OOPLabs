@@ -1,0 +1,105 @@
+
+Murder --------
+killer: Dragon_1 { x:39, y:17} 
+victim: Knight_3 { x:49, y:26} 
+Murder --------
+killer: Dragon_2 { x:12, y:24} 
+victim: Knight_1 { x:46, y:46} 
+Murder --------
+killer: Knight_2 { x:28, y:24} 
+victim: Dragon_3 { x:23, y:45} 
+Murder --------
+killer: Frog_1 { x:13, y:27} 
+victim: Dragon_2 { x:12, y:24} 
+Murder --------
+killer: Frog_1 { x:14, y:28} 
+victim: Knight_2 { x:18, y:22} 
+Murder --------
+killer: Frog_1 { x:15, y:29} 
+victim: Dragon_4 { x:21, y:25} 
+Murder --------
+killer: Frog_3 { x:15, y:4} 
+victim: Dragon_1 { x:16, y:7} 
+Murder --------
+killer: Dragon_1 { x:39, y:17} 
+victim: Knight_3 { x:49, y:26} 
+
+Murder --------
+killer: Dragon_2 { x:12, y:24} 
+victim: Knight_1 { x:46, y:46} 
+
+Murder --------
+killer: Knight_2 { x:28, y:24} 
+victim: Dragon_3 { x:23, y:45} 
+
+Murder --------
+killer: Frog_1 { x:13, y:27} 
+victim: Dragon_2 { x:12, y:24} 
+
+Murder --------
+killer: Frog_1 { x:14, y:28} 
+victim: Knight_2 { x:18, y:22} 
+
+Murder --------
+killer: Frog_1 { x:15, y:29} 
+victim: Dragon_4 { x:21, y:25} 
+
+Murder --------
+killer: Frog_3 { x:15, y:4} 
+victim: Dragon_1 { x:16, y:7} 
+
+Murder --------
+killer: Dragon_1 { x:24, y:17} 
+victim: Knight_3 { x:49, y:26} 
+
+Murder --------
+killer: Dragon_2 { x:12, y:24} 
+victim: Knight_1 { x:46, y:46} 
+
+Murder --------
+killer: Knight_2 { x:28, y:24} 
+victim: Dragon_3 { x:23, y:45} 
+
+Murder --------
+killer: Frog_1 { x:13, y:27} 
+victim: Dragon_2 { x:12, y:24} 
+
+Murder --------
+killer: Frog_1 { x:14, y:28} 
+victim: Knight_2 { x:18, y:22} 
+
+Murder --------
+killer: Frog_1 { x:15, y:29} 
+victim: Dragon_4 { x:21, y:25} 
+
+Murder --------
+killer: Frog_3 { x:15, y:4} 
+victim: Dragon_1 { x:16, y:7} 
+
+Murder --------
+killer: Dragon_1 { x:24, y:17} 
+victim: Knight_3 { x:49, y:26} 
+
+Murder --------
+killer: Dragon_2 { x:12, y:24} 
+victim: Knight_1 { x:46, y:46} 
+
+Murder --------
+killer: Knight_2 { x:28, y:24} 
+victim: Dragon_3 { x:23, y:45} 
+
+Murder --------
+killer: Frog_1 { x:13, y:27} 
+victim: Dragon_2 { x:12, y:24} 
+
+Murder --------
+killer: Frog_1 { x:14, y:28} 
+victim: Knight_2 { x:18, y:22} 
+
+Murder --------
+killer: Frog_1 { x:15, y:29} 
+victim: Dragon_4 { x:21, y:25} 
+
+Murder --------
+killer: Frog_3 { x:15, y:4} 
+victim: Dragon_1 { x:16, y:7} 
